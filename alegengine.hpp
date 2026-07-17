@@ -1,6 +1,8 @@
 #pragma once
 
 #include "rendering/Window.hpp"
+#include "rendering/Shader.hpp"
+#include "FileLoader.hpp"
 
 #include <string>
 
