@@ -9,14 +9,6 @@ namespace Aleg {
     shader = new Shader("shaders/Vertex.glsl", "shaders/Frag.glsl");
   }
 
-  void Object::drawAll() {
-    for (auto& [zIndex, objectVector] : objects) {
-      for (Object* object : objectVector) {
-        object->draw();
-      }
-    }
-  }
-
   Object::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex) 
     : position(position), size(size), transparency(transparency), color(color), usesColor(true), zIndex(zIndex) {
     initObject();
@@ -75,21 +67,53 @@ namespace Aleg {
     objects[zIndex].push_back(this);
   }
 
+  DrawInfo* Object::beforeDrawing() {
+    return new DrawInfo(position, size);
+  }
+
+  void Object::afterDrawing() {}
+
+  // draw and its subfunctions
+  void Object::drawAll() {
+    for (auto& [zIndex, objectVector] : objects) {
+      for (Object* object : objectVector) {
+        object->draw();
+      }
+    }
+  }
+
   void Object::draw() {
     if (!visible) return;
 
     glUseProgram(shader->program);
 
+    DrawInfo* info = beforeDrawing();
+
+    if (!info->shouldDraw) return;
+
+    makeModel(info);
+    sendFragmentInfo();
+
+    // Draw
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glBindVertexArray(0);
+
+    delete info;
+  }
+
+  void Object::makeModel(DrawInfo* info) {
     glm::mat4 model = glm::mat4(1.0f);
 
     model = glm::translate(
       model,
-      glm::vec3(position, 0.0f)
+      glm::vec3(info->position, 0.0f)
     );
 
     model = glm::translate( // Apply rotation anchor
       model,
-      glm::vec3(size * rotateAnchor, 0.0f)
+      glm::vec3(info->size * rotateAnchor, 0.0f)
     );
 
     model = glm::rotate( // Rotate
@@ -100,12 +124,12 @@ namespace Aleg {
 
     model = glm::translate( // Reset back to normal size
       model,
-      glm::vec3(-size * rotateAnchor, 0.0f)
+      glm::vec3(-info->size * rotateAnchor, 0.0f)
     );
 
     model = glm::scale(
       model,
-      glm::vec3(size, 1.0f)
+      glm::vec3(info->size, 1.0f)
     );
 
     // Orthographic projection
@@ -132,8 +156,9 @@ namespace Aleg {
       GL_FALSE,
       glm::value_ptr(projection)
     );
+  }
 
-    // Send fragment shader stuff
+  void Object::sendFragmentInfo() {
     glUniform1f(
       glGetUniformLocation(shader->program, "alpha"),
       1 - transparency
@@ -148,11 +173,22 @@ namespace Aleg {
       glGetUniformLocation(shader->program, "color"),
       color.x, color.y, color.z
     );
+  }
 
-    // Draw
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+  // update
+  void Object::updateAll() {
+    for (auto& [zIndex, objectVector] : objects) {
+      for (Object* object : objectVector) {
+        object->update();
+      }
+    }
+  }
 
-    glBindVertexArray(0);
+  void Object::update() {
+    if (anchored) return;
+
+    linearVelocity += glm::vec2(0.0f, gravity) * (float)Window::deltaTime;
+    position += linearVelocity * (float)Window::deltaTime;
+    rotation += angularVelocity * (float)Window::deltaTime;
   }
 }

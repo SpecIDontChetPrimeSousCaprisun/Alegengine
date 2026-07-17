@@ -12,6 +12,8 @@ namespace Aleg {
   bool Window::inGame = true;
   int Window::fbWidth = 600;
   int Window::fbHeight = 480;
+  double Window::deltaTime = 0;
+  double Window::lastFrame = 0;
 
   int Window::init() {
     if (!glfwInit()) return -1;
@@ -35,11 +37,11 @@ namespace Aleg {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glm::mat4 projection = glm::ortho(
+    /*glm::mat4 projection = glm::ortho(
         0.0f, (float)fbWidth,
         (float)fbHeight, 0.0f,
         -1.0f, 1.0f
-    );
+    );*/
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     return 0;
@@ -49,10 +51,21 @@ namespace Aleg {
     while (inGame && !glfwWindowShouldClose(window)) {
       glfwPollEvents();
 
+      double currentFrame = glfwGetTime();
+      deltaTime = currentFrame - lastFrame;
+      lastFrame = currentFrame;
+
+      if (deltaTime > 0.1) deltaTime = 0.1;
+
+
       glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
       glViewport(0, 0, fbWidth, fbHeight);
       glClear(GL_COLOR_BUFFER_BIT);
 
+      // Update
+      Object::updateAll();
+
+      // Draw
       Object::drawAll();
 
       glfwSwapBuffers(window);

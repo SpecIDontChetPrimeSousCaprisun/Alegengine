@@ -3,6 +3,7 @@
 #include "rendering/Window.hpp"
 #include "rendering/Shader.hpp"
 #include "objects/Object.hpp"
+#include "objects/DrawInfo.hpp"
 #include "FileLoader.hpp"
 
 #include <string>

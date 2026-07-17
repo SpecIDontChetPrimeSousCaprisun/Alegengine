@@ -45,8 +45,6 @@ namespace Aleg {
   }
 
   unsigned int Shader::getShaderFromSource(const char* source, GLenum type) {
-    std::cout << source << "\n";
-
     unsigned int shader = glCreateShader(type);
 
     glShaderSource(

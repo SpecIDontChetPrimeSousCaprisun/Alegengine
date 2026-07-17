@@ -15,5 +15,7 @@ namespace Aleg {
     static bool inGame;
     static int fbWidth;
     static int fbHeight;
+    static double deltaTime;
+    static double lastFrame;
   };
 }
