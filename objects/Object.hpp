@@ -2,6 +2,7 @@
 
 #include "../rendering/Shader.hpp"
 #include "DrawInfo.hpp"
+#include "CollisionResult.hpp"
 
 #include <vector>
 #include <map>
@@ -15,12 +16,12 @@ namespace Aleg {
     static void init();
     static void drawAll();
     static void updateAll();
+    static CollisionResult checkCollision(Object* a, Object* b);
 
     Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex);
 
     glm::vec2 position;
     glm::vec2 size;
-    glm::vec2 rotateAnchor = glm::vec2(0.5f, 0.5f);
     glm::vec2 linearVelocity = glm::vec2(0.0f, 0.0f);
 
     float transparency;
@@ -37,6 +38,11 @@ namespace Aleg {
   protected:
     virtual DrawInfo* beforeDrawing();
     virtual void afterDrawing();
+    virtual void resolveCollision(Object* object, 
+                                  glm::vec2 bestAxis, 
+                                  float minOverlap,
+                                  glm::vec2 WH,
+                                  glm::vec2 WHb);
   private:
     static std::map<float, std::vector<Object*>> objects;
     static Shader* shader;

@@ -113,18 +113,18 @@ namespace Aleg {
 
     model = glm::translate( // Apply rotation anchor
       model,
-      glm::vec3(info->size * rotateAnchor, 0.0f)
+      glm::vec3(info->size * 0.5f, 0.0f)
     );
 
     model = glm::rotate( // Rotate
       model,
-      rotation,
+      glm::radians(rotation),
       glm::vec3(0.0f, 0.0f, 1.0f)
     );
 
-    model = glm::translate( // Reset back to normal size
+    model = glm::translate( // Reset back to normal position
       model,
-      glm::vec3(-info->size * rotateAnchor, 0.0f)
+      glm::vec3(-info->size * 0.5f, 0.0f)
     );
 
     model = glm::scale(
@@ -183,12 +183,99 @@ namespace Aleg {
       }
     }
   }
-
+ 
   void Object::update() {
     if (anchored) return;
 
     linearVelocity += glm::vec2(0.0f, gravity) * (float)Window::deltaTime;
     position += linearVelocity * (float)Window::deltaTime;
     rotation += angularVelocity * (float)Window::deltaTime;
+
+    if (!canCollide) return;
+
+    for (auto& [zIndex, objectVector] : objects) {
+      for (Object* object : objectVector) {
+        if (object == this) continue;
+        if (!object->canCollide) continue;
+        
+        CollisionResult result = checkCollision(this, object);
+
+        if (result.hit) {
+          glm::vec2 WH(size.x / 2, size.y / 2);
+          glm::vec2 WHb(object->size.x / 2, object->size.y / 2);
+          resolveCollision(object, result.bestAxis, result.minOverlap, WH, WHb);
+        }
+      }
+    }
+  }
+
+  CollisionResult Object::checkCollision(Object* a, Object* b) {
+    float aRadians = a->rotation * glm::pi<float>() / 180.0f;
+    glm::vec2 Ax(std::cos(aRadians), std::sin(aRadians));
+    glm::vec2 Ay(-std::sin(aRadians), std::cos(aRadians));
+
+    float bRadians = b->rotation * glm::pi<float>() / 180.0f;
+    glm::vec2 Bx(std::cos(bRadians), std::sin(bRadians));
+    glm::vec2 By(-std::sin(bRadians), std::cos(bRadians));
+
+    glm::vec2 WH(a->size.x / 2, a->size.y / 2);
+    glm::vec2 WHb(b->size.x / 2, b->size.y / 2);
+    glm::vec2 T = (a->position + WH) - (b->position + WHb);
+
+    auto getOverlap = [&](glm::vec2 axis) -> float {
+        float ra = WH.x  * std::abs(glm::dot(Ax, axis)) +
+                    WH.y  * std::abs(glm::dot(Ay, axis));
+        float rb = WHb.x * std::abs(glm::dot(Bx, axis)) +
+                    WHb.y * std::abs(glm::dot(By, axis));
+        return (ra + rb) - std::abs(glm::dot(T, axis));
+    };
+
+    float o1 = getOverlap(Ax);
+    float o2 = getOverlap(Ay);
+    float o3 = getOverlap(Bx);
+    float o4 = getOverlap(By);
+
+    if (o1 <= 0 || o2 <= 0 || o3 <= 0 || o4 <= 0)
+        return { false, 0.0f, glm::vec2(0.0f) };
+
+    float minOverlap = o1;
+    glm::vec2 bestAxis = Ax;
+
+    if (o2 < minOverlap) { minOverlap = o2; bestAxis = Ay; }
+    if (o3 < minOverlap) { minOverlap = o3; bestAxis = Bx; }
+    if (o4 < minOverlap) { minOverlap = o4; bestAxis = By; }
+
+    return { true, minOverlap, bestAxis };
+  }
+
+  void Object::resolveCollision(Object* object, 
+                               glm::vec2 bestAxis, 
+                               float minOverlap,
+                               glm::vec2 WH,
+                               glm::vec2 WHb) {
+    glm::vec2 correction = bestAxis * minOverlap;
+    glm::vec2 centerA = position + WH;
+    glm::vec2 centerB = object->position + WHb;
+
+    glm::vec2 dir = centerA - centerB;
+
+    if (glm::dot(dir, bestAxis) < 0.0f) correction = -correction;
+
+    if (object->anchored) {
+      position += correction;
+    } else {
+      position += correction * 0.5f;
+      object->position -= correction * 0.5f;
+    }
+
+    float vn = glm::dot(linearVelocity, bestAxis);
+
+    if (vn < 0.0f)
+        linearVelocity -= vn * bestAxis;
+
+    float ovn = glm::dot(object->linearVelocity, bestAxis);
+
+    if (ovn < 0.0f)
+        object->linearVelocity -= ovn * bestAxis;
   }
 }
