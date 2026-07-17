@@ -19,6 +19,10 @@ namespace Aleg {
     static CollisionResult checkCollision(Object* a, Object* b);
 
     Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex);
+    virtual ~Object();
+
+    void pendDelete();
+    bool isDeleting();
 
     glm::vec2 position;
     glm::vec2 size;
@@ -44,11 +48,14 @@ namespace Aleg {
                                   glm::vec2 WH,
                                   glm::vec2 WHb);
   private:
+    static void deletePendingObjects();
+
     static std::map<float, std::vector<Object*>> objects;
     static Shader* shader;
 
     unsigned int VAO, VBO;
     float zIndex;
+    bool pendingDelete = false;
 
     void draw();
     void update();

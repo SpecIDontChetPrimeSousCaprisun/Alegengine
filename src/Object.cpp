@@ -7,11 +7,20 @@ namespace Aleg {
 
   void Object::init() {
     shader = new Shader("shaders/Vertex.glsl", "shaders/Frag.glsl");
-  }
+  } 
 
   Object::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex) 
     : position(position), size(size), transparency(transparency), color(color), usesColor(true), zIndex(zIndex) {
     initObject();
+  }
+
+  Object::~Object() {
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+
+    if (!usesColor) {
+      //glDeleteTextures(1, &texture);
+    }
   }
 
   void Object::initObject() {
@@ -177,6 +186,8 @@ namespace Aleg {
 
   // update
   void Object::updateAll() {
+    deletePendingObjects();
+
     for (auto& [zIndex, objectVector] : objects) {
       for (Object* object : objectVector) {
         object->update();
@@ -277,5 +288,30 @@ namespace Aleg {
 
     if (ovn < 0.0f)
         object->linearVelocity -= ovn * bestAxis;
+  }
+
+  // delete
+  void Object::deletePendingObjects() {
+    for (auto& [zIndex, objectsVector] : objects) {
+      for (auto it = objectsVector.begin(); it != objectsVector.end(); ) {
+        Object* object = *it;
+
+        if (object->pendingDelete) {
+          it = objectsVector.erase(it);
+          delete object;
+        }
+        else {
+          ++it;
+        }
+      }
+    }
+  }
+
+  void Object::pendDelete() {
+    pendingDelete = true;
+  }
+
+  bool Object::isDeleting() {
+    return pendingDelete;
   }
 }
