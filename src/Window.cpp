@@ -1,4 +1,4 @@
-#include "rendering/Window.hpp"
+#include "../rendering/Window.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

@@ -1,5 +1,5 @@
-#include "alegengine.hpp"
-#include "rendering/Window.hpp"
+#include "../alegengine.hpp"
+#include "../rendering/Window.hpp"
 
 namespace Aleg {
   void init(std::string type) {

@@ -1,5 +1,5 @@
-#include "rendering/Shader.hpp"
-#include "FileLoader.hpp"
+#include "../rendering/Shader.hpp"
+#include "../FileLoader.hpp"
 
 #include <iostream>
 
