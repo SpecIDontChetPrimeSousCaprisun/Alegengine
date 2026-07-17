@@ -13,5 +13,5 @@ namespace Aleg {
   private:
     static const char* loadSource(std::string path);
     static unsigned int getShaderFromSource(const char* source, GLenum type);
-  }
+  };
 }

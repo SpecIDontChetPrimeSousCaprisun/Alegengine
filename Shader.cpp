@@ -1,30 +1,34 @@
 #include "rendering/Shader.hpp"
 #include "FileLoader.hpp"
 
+#include <iostream>
+
 namespace Aleg {
   Shader::Shader(std::string vertexPath, std::string fragPath) {
     const char* vertexSource = loadSource(vertexPath);
     const char* fragSource = loadSource(fragPath);
 
     unsigned int vertexShader = getShaderFromSource(vertexSource, GL_VERTEX_SHADER);
-    unsigned int fragShader = getShaderFromSource(fragPath, GL_FRAGMENT_SHADER);
+    unsigned int fragShader = getShaderFromSource(fragSource, GL_FRAGMENT_SHADER);
 
-    shaderProgram = glCreateProgram();
+    int success;
+    char infoLog[512];
+    program = glCreateProgram();
 
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragShader);
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragShader);
 
-    glLinkProgram(shaderProgram);
+    glLinkProgram(program);
 
     glGetProgramiv(
-        shaderProgram,
+        program,
         GL_LINK_STATUS,
         &success
     );
 
     if (!success) {
       glGetProgramInfoLog(
-          shaderProgram,
+          program,
           512,
           NULL,
           infoLog
@@ -34,7 +38,7 @@ namespace Aleg {
     }
 
     glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    glDeleteShader(fragShader);
   }
 
   const char* Shader::loadSource(std::string path) {
@@ -42,8 +46,8 @@ namespace Aleg {
     return code.c_str();
   }
 
-  unsigned int getShaderFromSource(const char* source, GLenum type) {
-    unsigned int shader glCreateShader(type);
+  unsigned int Shader::getShaderFromSource(const char* source, GLenum type) {
+    unsigned int shader = glCreateShader(type);
 
     glShaderSource(
       shader,
