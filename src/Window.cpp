@@ -1,4 +1,5 @@
 #include "../rendering/Window.hpp"
+#include "../objects/Object.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -51,6 +52,8 @@ namespace Aleg {
       glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
       glViewport(0, 0, fbWidth, fbHeight);
       glClear(GL_COLOR_BUFFER_BIT);
+
+      Object::drawAll();
 
       glfwSwapBuffers(window);
     }

@@ -5,8 +5,11 @@
 
 namespace Aleg {
   Shader::Shader(std::string vertexPath, std::string fragPath) {
-    const char* vertexSource = loadSource(vertexPath);
-    const char* fragSource = loadSource(fragPath);
+    std::string vertexCode = FileLoader::loadFile(vertexPath);
+    std::string fragCode = FileLoader::loadFile(fragPath);
+
+    const char* vertexSource = vertexCode.c_str();
+    const char* fragSource = fragCode.c_str();
 
     unsigned int vertexShader = getShaderFromSource(vertexSource, GL_VERTEX_SHADER);
     unsigned int fragShader = getShaderFromSource(fragSource, GL_FRAGMENT_SHADER);
@@ -41,12 +44,9 @@ namespace Aleg {
     glDeleteShader(fragShader);
   }
 
-  const char* Shader::loadSource(std::string path) {
-    std::string code = FileLoader::loadFile(path);
-    return code.c_str();
-  }
-
   unsigned int Shader::getShaderFromSource(const char* source, GLenum type) {
+    std::cout << source << "\n";
+
     unsigned int shader = glCreateShader(type);
 
     glShaderSource(
@@ -75,7 +75,7 @@ namespace Aleg {
         infoLog
       );
 
-      std::cout << "VERTEX SHADER ERROR:\n" << infoLog << std::endl;
+      std::cout << "SHADER ERROR:\n" << infoLog << std::endl;
     }
 
     return shader;

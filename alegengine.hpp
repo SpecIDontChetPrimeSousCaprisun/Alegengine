@@ -2,6 +2,7 @@
 
 #include "rendering/Window.hpp"
 #include "rendering/Shader.hpp"
+#include "objects/Object.hpp"
 #include "FileLoader.hpp"
 
 #include <string>
