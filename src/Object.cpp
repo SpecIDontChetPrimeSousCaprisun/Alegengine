@@ -277,7 +277,7 @@ namespace Aleg {
     } else {
       position += correction * 0.5f;
       object->position -= correction * 0.5f;
-    }
+    } 
 
     float vn = glm::dot(linearVelocity, bestAxis);
 
@@ -288,6 +288,12 @@ namespace Aleg {
 
     if (ovn < 0.0f)
         object->linearVelocity -= ovn * bestAxis;
+    
+    if (correction.y <= 0.0f) {
+      float rotationDir = object->rotation < 0.0f ? -1.0f : 1.0f;
+      linearVelocity.x += ((linearVelocity.y * 150) * rotationDir) * Window::deltaTime;
+      linearVelocity.y = gravity * Window::deltaTime;
+    }
   }
 
   // delete

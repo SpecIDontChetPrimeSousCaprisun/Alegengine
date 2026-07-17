@@ -18,8 +18,7 @@ namespace Aleg {
     static void updateAll();
     static CollisionResult checkCollision(Object* a, Object* b);
 
-    Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex);
-    virtual ~Object();
+    Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex); 
 
     void pendDelete();
     bool isDeleting();
@@ -40,6 +39,8 @@ namespace Aleg {
     bool anchored = false;
     bool canCollide = true;
   protected:
+    virtual ~Object();
+
     virtual DrawInfo* beforeDrawing();
     virtual void afterDrawing();
     virtual void resolveCollision(Object* object, 
