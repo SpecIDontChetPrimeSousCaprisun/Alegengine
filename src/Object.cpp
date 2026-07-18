@@ -288,11 +288,9 @@ namespace Aleg {
 
     if (ovn < 0.0f)
         object->linearVelocity -= ovn * bestAxis;
-    
-    if (correction.y <= 0.0f) {
-      float rotationDir = object->rotation < 0.0f ? -1.0f : 1.0f;
-      linearVelocity.x += ((linearVelocity.y * 150) * rotationDir) * Window::deltaTime;
-      linearVelocity.y = gravity * Window::deltaTime;
+
+    if (correction.y < 0.0f && object->rotation == 0.0f) {
+      linearVelocity.y = 0.0f;
     }
   }
 
