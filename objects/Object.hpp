@@ -3,6 +3,7 @@
 #include "../rendering/Shader.hpp"
 #include "DrawInfo.hpp"
 #include "CollisionResult.hpp"
+#include "CollisionGroup.hpp"
 
 #include <vector>
 #include <map>
@@ -38,6 +39,9 @@ namespace Aleg {
     bool visible = true;
     bool anchored = false;
     bool canCollide = true;
+
+    CollisionGroup mask = CollisionGroups::Default;
+    CollisionGroup collisionGroup = CollisionGroups::Default;
   protected:
     virtual ~Object();
 

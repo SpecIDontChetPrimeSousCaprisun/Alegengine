@@ -2,8 +2,11 @@
 
 #include "rendering/Window.hpp"
 #include "rendering/Shader.hpp"
+
 #include "objects/Object.hpp"
 #include "objects/DrawInfo.hpp"
+#include "objects/CollisionGroup.hpp"
+
 #include "FileLoader.hpp"
 
 #include <string>

@@ -208,7 +208,8 @@ namespace Aleg {
       for (Object* object : objectVector) {
         if (object == this) continue;
         if (!object->canCollide) continue;
-        
+        if (object->collisionGroup != mask) continue;
+
         CollisionResult result = checkCollision(this, object);
 
         if (result.hit) {
