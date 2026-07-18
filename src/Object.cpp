@@ -1,5 +1,6 @@
 #include "../objects/Object.hpp"
 #include "../rendering/Window.hpp"
+#include "../helpers/FileLoader.hpp"
 
 namespace Aleg {
   std::map<float, std::vector<Object*>> Object::objects;
@@ -11,6 +12,11 @@ namespace Aleg {
 
   Object::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex) 
     : position(position), size(size), transparency(transparency), color(color), usesColor(true), zIndex(zIndex) {
+    initObject();
+  }
+
+  Object::Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex) 
+    : position(position), size(size), transparency(transparency), usesColor(false), texture(FileLoader::loadTexture(texPath)), zIndex(zIndex) {
     initObject();
   }
 
@@ -181,6 +187,14 @@ namespace Aleg {
     glUniform3f(
       glGetUniformLocation(shader->program, "color"),
       color.x, color.y, color.z
+    );
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glUniform1i(
+      glGetUniformLocation(shader->program, "tex"),
+      0
     );
   }
 
