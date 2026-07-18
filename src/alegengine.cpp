@@ -12,10 +12,14 @@ void enableAnsiOnWindows() {
 #endif
 
 namespace Aleg {
+  std::string type;
+
   void init(std::string type) {
     #ifdef _WIN32
       enableAnsiOnWindows();
     #endif
+
+    Aleg::type = type;
 
     Window::init();
     Object::init();

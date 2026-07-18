@@ -1,6 +1,4 @@
-#include "../objects/Object.hpp"
-#include "../rendering/Window.hpp"
-#include "../helpers/FileLoader.hpp"
+#include "../alegengine.hpp"
 
 namespace Aleg {
   std::map<float, std::vector<Object*>> Object::objects;
@@ -212,7 +210,7 @@ namespace Aleg {
   void Object::update() {
     if (anchored) return;
 
-    linearVelocity += glm::vec2(0.0f, gravity) * (float)Window::deltaTime;
+    if (type == "side") linearVelocity += glm::vec2(0.0f, gravity) * (float)Window::deltaTime;
     position += linearVelocity * (float)Window::deltaTime;
     rotation += angularVelocity * (float)Window::deltaTime;
 

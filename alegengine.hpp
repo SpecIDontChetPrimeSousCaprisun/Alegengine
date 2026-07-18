@@ -13,6 +13,8 @@
 #include <string>
 
 namespace Aleg {
+  extern std::string type;
+
   void init(std::string type = "topdown"); // Types can be : topdown and side
   void mainLoop();
 }
