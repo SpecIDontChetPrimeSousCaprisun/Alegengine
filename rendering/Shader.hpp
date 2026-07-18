@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../helpers/Logger.hpp"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <string>
@@ -11,6 +13,8 @@ namespace Aleg {
 
     unsigned int program;
   private:
+    static Logger* logger;
+
     static unsigned int getShaderFromSource(const char* source, GLenum type);
   };
 }

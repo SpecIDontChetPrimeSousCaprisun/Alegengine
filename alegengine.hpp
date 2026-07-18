@@ -7,7 +7,8 @@
 #include "objects/DrawInfo.hpp"
 #include "objects/CollisionGroup.hpp"
 
-#include "FileLoader.hpp"
+#include "helpers/FileLoader.hpp"
+#include "helpers/Logger.hpp"
 
 #include <string>
 
