@@ -10,6 +10,6 @@ logger->error("ERROR");
 
 **Output:**
 
-<span style="color: green;">[LOG] (Class name):</span> Hello, World :)
-<span style="color: yellow;">[WARN] (Class name):</span> WARNING !!!!!!!!!
-<span style="color: red;">[ERROR] (Class name):</span> ERROR (always printed, regardless of debug mode)
+<span style="color: green;">[LOG] (Class name):</span> Hello, World :)\n
+<span style="color: yellow;">[WARN] (Class name):</span> WARNING !!!!!!!!!\n
+<span style="color: red;">[ERROR] (Class name):</span> ERROR (always printed, regardless of debug mode)\n
