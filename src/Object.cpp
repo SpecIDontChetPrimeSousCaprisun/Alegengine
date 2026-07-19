@@ -81,7 +81,9 @@ namespace Aleg {
   }
 
   DrawInfo* Object::beforeDrawing() {
-    return new DrawInfo(position, size);
+    DrawInfo* info = new DrawInfo(realPosition, realSize); 
+
+    return info;
   }
 
   void Object::afterDrawing() {}
@@ -112,6 +114,8 @@ namespace Aleg {
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glBindVertexArray(0);
+
+    afterDrawing();
 
     delete info;
   }
@@ -208,11 +212,19 @@ namespace Aleg {
   }
  
   void Object::update() {
+    if (parent) realPosition = parent->realPosition + position;
+    else realPosition = position;
+
+    realSize = size;
+
     if (anchored) return;
 
     if (type == "side") linearVelocity += glm::vec2(0.0f, gravity) * (float)Window::deltaTime;
     position += linearVelocity * (float)Window::deltaTime;
     rotation += angularVelocity * (float)Window::deltaTime;
+
+    if (parent) realPosition = parent->realPosition + position;
+    else realPosition = position;
 
     if (!canCollide) return;
 
@@ -225,12 +237,15 @@ namespace Aleg {
         CollisionResult result = checkCollision(this, object);
 
         if (result.hit) {
-          glm::vec2 WH(size.x / 2, size.y / 2);
-          glm::vec2 WHb(object->size.x / 2, object->size.y / 2);
+          glm::vec2 WH(realSize.x / 2, realSize.y / 2);
+          glm::vec2 WHb(object->realSize.x / 2, object->realSize.y / 2);
           resolveCollision(object, result.bestAxis, result.minOverlap, WH, WHb);
         }
       }
     }
+
+    if (parent) position = realPosition - parent->realPosition;
+    else position = realPosition;
   }
 
   CollisionResult Object::checkCollision(Object* a, Object* b) {
@@ -242,9 +257,9 @@ namespace Aleg {
     glm::vec2 Bx(std::cos(bRadians), std::sin(bRadians));
     glm::vec2 By(-std::sin(bRadians), std::cos(bRadians));
 
-    glm::vec2 WH(a->size.x / 2, a->size.y / 2);
-    glm::vec2 WHb(b->size.x / 2, b->size.y / 2);
-    glm::vec2 T = (a->position + WH) - (b->position + WHb);
+    glm::vec2 WH(a->realSize.x / 2, a->realSize.y / 2);
+    glm::vec2 WHb(b->realSize.x / 2, b->realSize.y / 2);
+    glm::vec2 T = (a->realPosition + WH) - (b->realPosition + WHb);
 
     auto getOverlap = [&](glm::vec2 axis) -> float {
         float ra = WH.x  * std::abs(glm::dot(Ax, axis)) +
@@ -278,18 +293,18 @@ namespace Aleg {
                                glm::vec2 WH,
                                glm::vec2 WHb) {
     glm::vec2 correction = bestAxis * minOverlap;
-    glm::vec2 centerA = position + WH;
-    glm::vec2 centerB = object->position + WHb;
+    glm::vec2 centerA = realPosition + WH;
+    glm::vec2 centerB = object->realPosition + WHb;
 
     glm::vec2 dir = centerA - centerB;
 
     if (glm::dot(dir, bestAxis) < 0.0f) correction = -correction;
 
     if (object->anchored) {
-      position += correction;
+      realPosition += correction;
     } else {
-      position += correction * 0.5f;
-      object->position -= correction * 0.5f;
+      realPosition += correction * 0.5f;
+      object->realPosition -= correction * 0.5f;
     } 
 
     float vn = glm::dot(linearVelocity, bestAxis);

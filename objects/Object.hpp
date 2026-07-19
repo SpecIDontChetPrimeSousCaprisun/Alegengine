@@ -26,7 +26,9 @@ namespace Aleg {
     bool isDeleting();
 
     glm::vec2 position;
+    glm::vec2 realPosition;
     glm::vec2 size;
+    glm::vec2 realSize;
     glm::vec2 linearVelocity = glm::vec2(0.0f, 0.0f);
 
     float transparency;
@@ -40,6 +42,8 @@ namespace Aleg {
     bool visible = true;
     bool anchored = false;
     bool canCollide = true;
+
+    Object* parent = nullptr;
 
     CollisionGroup mask = CollisionGroups::Default;
     CollisionGroup collisionGroup = CollisionGroups::Default;
