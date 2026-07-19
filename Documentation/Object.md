@@ -2,13 +2,13 @@
 ## Object
 
 Objects are the fondation for your games. You can create them with these two constructors :
-```
+```cpp
 Aleg::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex);
 Aleg::Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex);
 ```
 
 Along these constructors, you can further customise them with :
-```
+```cpp
 Aleg::Object->linearVelocity; // glm::vec2 (be careful, this is where gravity is applied in side mode)
 Aleg::Object->angularVelocity; // float
 Aleg::Object->rotation; // float
@@ -21,7 +21,7 @@ Aleg::Object->collisionGroup; // Aleg::CollisionGroups
 ```
 
 If you need to add custom shader, or make the object do something before / after rendering / updating you can just inherit from it.
-```
+```cpp
 // CustomObject.hpp
 #pragma once
 

@@ -17,7 +17,7 @@ This project is majorly vibe-free.
 ## How to link to the project
 
 ### 1) Add it to your include path
-```
+```bash
 cd include # Go into your include path
 git clone https://github.com/SpecIDontChetPrimeSousCaprisun/Alegengine.git
 ```
@@ -25,7 +25,7 @@ git clone https://github.com/SpecIDontChetPrimeSousCaprisun/Alegengine.git
 ### 2) Build your project
 Basic g++ example of a build command :
 
-```
+```bash
 g++ -Wall -Wextra \
   -Iinclude include/Alegengine/src/* \
   -Iinclude/Alegengine/third-party main.cpp \

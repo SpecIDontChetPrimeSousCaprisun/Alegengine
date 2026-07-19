@@ -3,7 +3,7 @@
 
 ### init()
 Before doing anything with this library you have to call :
-```
+```cpp
 Aleg::init()
 ```
 
