@@ -16,5 +16,3 @@ Specifies the type of the game, can be
 ### mainLoop()
 Calls the main loop and starts rendering the game.
 Yields until the game window is closed.
-```
-```

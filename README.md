@@ -41,8 +41,6 @@ g++ -Wall -Wextra \
   -lXcursor \
   -lm
 ```
-```
-```
 
 Go see the make file in [Alegengine test](https://github.com/SpecIDontChetPrimeSousCaprisun/AlegengineTest/tree/main) for a bigger implementation.
 
