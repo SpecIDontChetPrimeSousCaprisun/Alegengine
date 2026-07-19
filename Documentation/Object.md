@@ -7,7 +7,7 @@ Aleg::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 c
 Aleg::Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex);
 ```
 
-Along these constructors, you can further customise them with :
+You can further modify them with :
 ```cpp
 Aleg::Object->linearVelocity; // glm::vec2 (be careful, this is where gravity is applied in side mode)
 Aleg::Object->angularVelocity; // float
