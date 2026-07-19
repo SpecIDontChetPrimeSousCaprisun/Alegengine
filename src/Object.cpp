@@ -1,4 +1,5 @@
-#include "../alegengine.hpp"
+#include <Alegengine/alegengine.hpp>
+#include <cmath>
 
 namespace Aleg {
   std::map<float, std::vector<Object*>> Object::objects;
@@ -210,10 +211,15 @@ namespace Aleg {
       }
     }
   }
- 
+
+  void Object::beforeUpdate() {}
+  void Object::afterUpdate() {}
+
   void Object::update() {
     if (parent) realPosition = parent->realPosition + position;
     else realPosition = position;
+
+    beforeUpdate();
 
     realSize = size;
 
@@ -246,6 +252,8 @@ namespace Aleg {
 
     if (parent) position = realPosition - parent->realPosition;
     else position = realPosition;
+
+    afterUpdate();
   }
 
   CollisionResult Object::checkCollision(Object* a, Object* b) {
@@ -288,10 +296,10 @@ namespace Aleg {
   }
 
   void Object::resolveCollision(Object* object, 
-                               glm::vec2 bestAxis, 
-                               float minOverlap,
-                               glm::vec2 WH,
-                               glm::vec2 WHb) {
+                                glm::vec2 bestAxis, 
+                                float minOverlap,
+                                glm::vec2 WH,
+                                glm::vec2 WHb) {
     glm::vec2 correction = bestAxis * minOverlap;
     glm::vec2 centerA = realPosition + WH;
     glm::vec2 centerB = object->realPosition + WHb;
@@ -345,5 +353,100 @@ namespace Aleg {
 
   bool Object::isDeleting() {
     return pendingDelete;
+  }
+
+  // raycast
+  RaycastResult* Object::raycast(glm::vec2 origin,
+                                 glm::vec2 dir,
+                                 CollisionGroup mask) {
+    Object* closestObj = nullptr;
+    float maxDist = glm::length(dir);
+    float closestT = maxDist;
+
+    glm::vec2 dirNorm = glm::normalize(dir);
+
+    for (auto& [zIndex, objectsVector] : objects) {
+      for (Object* object : objectsVector) {
+        if (!object->canCollide) continue;
+        if (object->collisionGroup != mask) continue;
+
+        float rad = object->rotation * glm::pi<float>() / 180.0f;
+
+        glm::vec2 Ax(std::cos(rad), std::sin(rad));
+        glm::vec2 Ay(-std::sin(rad), std::cos(rad));
+
+        // half extents
+        glm::vec2 half = object->realSize * 0.5f;
+
+        // center of box
+        glm::vec2 center = object->realPosition + half;
+
+        // Transform ray into OBB space
+        glm::vec2 relOrigin = origin - center;
+
+        glm::vec2 localOrigin(
+            glm::dot(relOrigin, Ax),
+            glm::dot(relOrigin, Ay)
+        );
+
+        glm::vec2 localDir(
+            glm::dot(dirNorm, Ax),
+            glm::dot(dirNorm, Ay)
+        );
+
+        // AABB slab test in local space
+        glm::vec2 min(-half.x, -half.y);
+        glm::vec2 max( half.x,  half.y);
+
+        float tMin = 0.0f;
+        float tMax = maxDist;
+
+        for (int i = 0; i < 2; i++) {
+          float o = (i == 0) ? localOrigin.x : localOrigin.y;
+          float d = (i == 0) ? localDir.x : localDir.y;
+          float mn = (i == 0) ? min.x : min.y;
+          float mx = (i == 0) ? max.x : max.y;
+
+          if (fabs(d) < 1e-8f) {
+            if (o < mn || o > mx) {
+              tMin = 2.0f;
+              break;
+            }
+          } else {
+            float invD = 1.0f / d;
+            float t1 = (mn - o) * invD;
+            float t2 = (mx - o) * invD;
+
+            if (t1 > t2) std::swap(t1, t2);
+
+            tMin = std::max(tMin, t1);
+            tMax = std::min(tMax, t2);
+
+            if (tMin > tMax) break;
+          }
+        }
+
+        if (tMin > tMax) continue;
+        if (tMax < 0.0f) continue;
+
+        float t = std::max(tMin, 0.0f);
+
+        if (t < closestT) {
+          closestT = t;
+          closestObj = object;
+        }
+      }
+    }
+  
+    if (closestObj) {
+      RaycastResult* result = new RaycastResult();
+
+      result->tHit = closestT;
+      result->hitPoint = origin + dirNorm * closestT;
+      result->object = closestObj;
+      return result;
+    }
+
+    return nullptr;
   }
 }

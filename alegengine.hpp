@@ -6,6 +6,7 @@
 #include "objects/Object.hpp"
 #include "objects/DrawInfo.hpp"
 #include "objects/CollisionGroup.hpp"
+#include "objects/Player.hpp"
 
 #include "helpers/FileLoader.hpp"
 #include "helpers/Logger.hpp"

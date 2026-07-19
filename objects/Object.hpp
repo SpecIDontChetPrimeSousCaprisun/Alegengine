@@ -12,12 +12,24 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Aleg {
+  class Object;
+
+  class RaycastResult {
+  public:
+    Object* object = nullptr;
+    float tHit = 0.0f;
+    glm::vec2 hitPoint;
+  };
+
   class Object {
   public:
     static void init();
     static void drawAll();
     static void updateAll();
     static CollisionResult checkCollision(Object* a, Object* b);
+    static RaycastResult* raycast(glm::vec2 origin,
+                                  glm::vec2 dir,
+                                  CollisionGroup mask = CollisionGroups::Default);
 
     Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex); 
     Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex);
@@ -52,6 +64,8 @@ namespace Aleg {
 
     virtual DrawInfo* beforeDrawing();
     virtual void afterDrawing();
+    virtual void beforeUpdate();
+    virtual void afterUpdate();
     virtual void resolveCollision(Object* object, 
                                   glm::vec2 bestAxis, 
                                   float minOverlap,
