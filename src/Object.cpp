@@ -86,7 +86,7 @@ namespace Aleg {
   DrawInfo* Object::beforeDrawing() {
     DrawInfo* info = new DrawInfo(realPosition, realSize); 
 
-    info->position += Camera::currentCamera->position;
+    if (Camera::currentCamera) info->position -= Camera::currentCamera->realPosition;
 
     return info;
   }

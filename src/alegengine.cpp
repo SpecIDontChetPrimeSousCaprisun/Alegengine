@@ -1,4 +1,4 @@
-#include "../alegengine.hpp"
+#include <Alegengine/alegengine.hpp>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -23,6 +23,7 @@ namespace Aleg {
 
     Window::init();
     Object::init();
+    Camera::currentCamera = new Camera(glm::vec2(0.0f, 0.0f));
   }
 
   void mainLoop() {
