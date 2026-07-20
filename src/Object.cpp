@@ -81,15 +81,18 @@ namespace Aleg {
     objects[zIndex].push_back(this);
   }
 
+  // draw
+
   DrawInfo* Object::beforeDrawing() {
     DrawInfo* info = new DrawInfo(realPosition, realSize); 
+
+    info->position += Camera::currentCamera->position;
 
     return info;
   }
 
   void Object::afterDrawing() {}
-
-  // draw and its subfunctions
+ 
   void Object::drawAll() {
     for (auto& [zIndex, objectVector] : objects) {
       for (Object* object : objectVector) {
