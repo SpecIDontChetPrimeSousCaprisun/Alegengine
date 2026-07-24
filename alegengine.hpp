@@ -9,8 +9,12 @@
 #include "objects/CollisionGroup.hpp"
 #include "objects/Player.hpp"
 
+#include "userInterface/UIElement.hpp"
+#include "userInterface/TextElement.hpp"
+
 #include "helpers/FileLoader.hpp"
 #include "helpers/Logger.hpp"
+#include "helpers/Font.hpp"
 
 #include <string>
 

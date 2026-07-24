@@ -63,7 +63,7 @@ namespace Aleg {
     virtual ~Object();
 
     virtual DrawInfo* beforeDrawing();
-    virtual void afterDrawing();
+    virtual void afterDrawing(DrawInfo* info);
     virtual void beforeUpdate();
     virtual void afterUpdate();
     virtual void resolveCollision(Object* object, 

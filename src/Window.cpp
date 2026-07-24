@@ -1,6 +1,4 @@
-#include "../rendering/Window.hpp"
-#include "../objects/Object.hpp"
-
+#include <Alegengine/alegengine.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <sstream>
@@ -57,10 +55,16 @@ namespace Aleg {
 
       if (deltaTime > 0.1) deltaTime = 0.1;
 
+      int oldFbWidth = fbWidth;
+      int oldFbHeight = fbHeight;
 
       glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
       glViewport(0, 0, fbWidth, fbHeight);
-      glClear(GL_COLOR_BUFFER_BIT);
+      glClear(GL_COLOR_BUFFER_BIT); 
+
+      if (fbWidth != oldFbWidth || fbHeight != oldFbHeight) {
+        TextElement::recalculateAllFonts();
+      }
 
       // Update
       Object::updateAll();

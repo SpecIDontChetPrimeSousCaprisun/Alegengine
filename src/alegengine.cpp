@@ -23,6 +23,7 @@ namespace Aleg {
 
     Window::init();
     Object::init();
+    TextElement::init();
     Camera::currentCamera = new Camera(glm::vec2(0.0f, 0.0f));
   }
 

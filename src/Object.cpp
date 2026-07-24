@@ -91,7 +91,7 @@ namespace Aleg {
     return info;
   }
 
-  void Object::afterDrawing() {}
+  void Object::afterDrawing(DrawInfo* info) {}
  
   void Object::drawAll() {
     for (auto& [zIndex, objectVector] : objects) {
@@ -119,7 +119,7 @@ namespace Aleg {
 
     glBindVertexArray(0);
 
-    afterDrawing();
+    afterDrawing(info);
 
     delete info;
   }
