@@ -49,6 +49,7 @@ namespace Aleg {
     float gravity = 500.0f;
     
     glm::vec3 color;
+    glm::vec3 colorChange = glm::vec3(0.0f, 0.0f, 0.0f);
     
     bool usesColor;
     bool visible = true;

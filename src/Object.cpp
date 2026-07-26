@@ -195,6 +195,11 @@ namespace Aleg {
       color.x, color.y, color.z
     );
 
+    glUniform3f(
+      glGetUniformLocation(shader->program, "colorChange"),
+      colorChange.x, colorChange.y, colorChange.z
+    );
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
 

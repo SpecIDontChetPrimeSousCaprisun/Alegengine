@@ -11,6 +11,7 @@
 
 #include "userInterface/UIElement.hpp"
 #include "userInterface/TextElement.hpp"
+#include "userInterface/Button.hpp"
 
 #include "helpers/FileLoader.hpp"
 #include "helpers/Logger.hpp"
