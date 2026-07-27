@@ -34,8 +34,11 @@ namespace Aleg {
     Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex); 
     Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex);
 
+    void setParent(Object* parent);
     void pendDelete();
     bool isDeleting();
+    Object* getParent();
+    std::vector<Object*> getChildren();
 
     glm::vec2 position;
     glm::vec2 realPosition;
@@ -55,8 +58,6 @@ namespace Aleg {
     bool visible = true;
     bool anchored = false;
     bool canCollide = true;
-
-    Object* parent = nullptr;
 
     CollisionGroup mask = CollisionGroups::Default;
     CollisionGroup collisionGroup = CollisionGroups::Default;
@@ -81,6 +82,8 @@ namespace Aleg {
     unsigned int VAO, VBO, texture;
     float zIndex;
     bool pendingDelete = false;
+    Object* parent = nullptr;
+    std::vector<Object*> children;
 
     void draw();
     void update();

@@ -14,9 +14,9 @@ namespace Aleg {
   }
 
   void Camera::beforeUpdate() {
-    if (parent) {
+    if (getParent()) {
       position = -glm::vec2(Aleg::Window::fbWidth, Aleg::Window::fbHeight) / 2.0f;
-      position += parent->realSize / 2.0f;
+      position += getParent()->realSize / 2.0f;
     }
   }
 }

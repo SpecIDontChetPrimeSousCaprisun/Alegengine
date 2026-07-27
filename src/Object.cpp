@@ -457,4 +457,29 @@ namespace Aleg {
 
     return nullptr;
   }
+
+  // parenting
+  void Object::setParent(Object* parent) {
+    if (this->parent) {
+      for (auto it = this->parent->children.begin(); it != this->parent->children.end(); ) {
+        if (*it == this) {
+          it = this->parent->children.erase(it);
+          break;
+        } else {
+          ++it;
+        }
+      }
+    }
+
+    this->parent = parent;
+    this->parent->children.push_back(this);
+  }
+
+  Object* Object::getParent() {
+    return parent;
+  }
+
+  std::vector<Object*> Object::getChildren() {
+    return children;
+  }
 }

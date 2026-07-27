@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <vector>
+#include <functional>
 
 namespace Aleg {
   class Window {
@@ -17,5 +18,6 @@ namespace Aleg {
     static int fbHeight;
     static double deltaTime;
     static double lastFrame;
+    static std::vector<std::function<void(double, double)>> scrollCallbacks;
   };
 }
