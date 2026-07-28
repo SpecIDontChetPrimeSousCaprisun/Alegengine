@@ -4,6 +4,7 @@
 namespace Aleg {
   std::map<float, std::vector<Object*>> Object::objects;
   Shader* Object::shader;
+  Logger* Object::logger = new Logger("Object");
 
   void Object::init() {
     shader = new Shader("shaders/Vertex.glsl", "shaders/Frag.glsl");
@@ -87,6 +88,11 @@ namespace Aleg {
     DrawInfo* info = new DrawInfo(realPosition, realSize); 
 
     if (Camera::currentCamera) info->position -= Camera::currentCamera->realPosition;
+    if (hasMask) {
+      info->hasMask = true;
+      info->maskPosition = maskPosition;
+      info->maskSize = maskSize;
+    }
 
     return info;
   }
@@ -111,7 +117,7 @@ namespace Aleg {
     if (!info->shouldDraw) return;
 
     makeModel(info);
-    sendFragmentInfo();
+    sendFragmentInfo(info);
 
     // Draw
     glBindVertexArray(VAO);
@@ -179,7 +185,8 @@ namespace Aleg {
     );
   }
 
-  void Object::sendFragmentInfo() {
+  void Object::sendFragmentInfo(DrawInfo* info) {
+    // Send color stuff
     glUniform1f(
       glGetUniformLocation(shader->program, "alpha"),
       1 - transparency
@@ -200,6 +207,38 @@ namespace Aleg {
       colorChange.x, colorChange.y, colorChange.z
     );
 
+    // Send mask
+    if (info->hasMask) {
+      glUniform1i(glGetUniformLocation(shader->program, "hasMask"), 1);
+      glUniform2f(
+        glGetUniformLocation(shader->program, "maskPos"),
+        info->maskPosition.x, info->maskPosition.y
+      );
+
+      glUniform2f(
+        glGetUniformLocation(shader->program, "maskSize"),
+        info->maskSize.x, info->maskSize.y
+      );
+    } else glUniform1i(glGetUniformLocation(shader->program, "hasMask"), 0);
+    
+    // Send Object data
+    glUniform2f(
+      glGetUniformLocation(shader->program, "realPos"),
+      info->position.x, info->position.y
+    );
+
+    glUniform2f(
+      glGetUniformLocation(shader->program, "realSize"),
+      info->size.x, info->size.y
+    );
+
+    // Send resolution
+    glUniform2f(
+      glGetUniformLocation(shader->program, "resolution"),
+      Window::fbWidth, Window::fbHeight
+    );
+
+    // Send texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -481,5 +520,26 @@ namespace Aleg {
 
   std::vector<Object*> Object::getChildren() {
     return children;
+  }
+
+  // mask
+  void Object::setMask(glm::vec2 maskPos, glm::vec2 maskSize) {
+    hasMask = true;
+    maskPosition = maskPos;
+    this->maskSize = maskSize;
+  }
+
+  void Object::removeMask() {
+    hasMask = false;
+  }
+
+  MaskResult* Object::getMask() {
+    MaskResult* result = new MaskResult();
+
+    result->hasMask = hasMask;
+    result->position = maskPosition;
+    result->size = maskSize;
+
+    return result;
   }
 }

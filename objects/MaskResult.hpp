@@ -5,15 +5,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Aleg {
-  class DrawInfo {
+  class MaskResult {
   public:
-    DrawInfo(glm::vec2 position, glm::vec2 size);
-
     glm::vec2 position;
     glm::vec2 size;
-    glm::vec2 maskPosition;
-    glm::vec2 maskSize;
-    bool shouldDraw = true;
-    bool hasMask = false;
+    bool hasMask;
   };
 }

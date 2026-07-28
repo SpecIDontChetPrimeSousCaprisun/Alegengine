@@ -1,10 +1,11 @@
 #pragma once
 
-#include "../rendering/Shader.hpp"
-#include "DrawInfo.hpp"
-#include "CollisionResult.hpp"
-#include "CollisionGroup.hpp"
-
+#include <Alegengine/rendering/Shader.hpp>
+#include <Alegengine/objects/DrawInfo.hpp>
+#include <Alegengine/objects/CollisionResult.hpp>
+#include <Alegengine/objects/CollisionGroup.hpp>
+#include <Alegengine/helpers/Logger.hpp>
+#include <Alegengine/objects/MaskResult.hpp>
 #include <vector>
 #include <map>
 #include <glm/glm.hpp>
@@ -34,11 +35,14 @@ namespace Aleg {
     Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex); 
     Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex);
 
+    void setMask(glm::vec2 maskPos, glm::vec2 maskSize);
+    void removeMask();
     void setParent(Object* parent);
     void pendDelete();
     bool isDeleting();
     Object* getParent();
     std::vector<Object*> getChildren();
+    MaskResult* getMask();
 
     glm::vec2 position;
     glm::vec2 realPosition;
@@ -78,10 +82,14 @@ namespace Aleg {
 
     static std::map<float, std::vector<Object*>> objects;
     static Shader* shader;
+    static Logger* logger;
 
     unsigned int VAO, VBO, texture;
     float zIndex;
     bool pendingDelete = false;
+    bool hasMask = false;
+    glm::vec2 maskPosition;
+    glm::vec2 maskSize;
     Object* parent = nullptr;
     std::vector<Object*> children;
 
@@ -91,6 +99,6 @@ namespace Aleg {
 
     // draw() subfunctions
     void makeModel(DrawInfo* info);
-    void sendFragmentInfo();
+    void sendFragmentInfo(DrawInfo* info);
   };
 }

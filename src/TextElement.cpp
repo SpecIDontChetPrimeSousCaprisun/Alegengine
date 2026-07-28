@@ -121,6 +121,38 @@ namespace Aleg {
       pivot.y
     );
 
+    // Send mask
+    if (info->hasMask) {
+      glUniform1i(glGetUniformLocation(shader->program, "hasMask"), 1);
+      glUniform2f(
+        glGetUniformLocation(shader->program, "maskPos"),
+        info->maskPosition.x, info->maskPosition.y
+      );
+
+      glUniform2f(
+        glGetUniformLocation(shader->program, "maskSize"),
+        info->maskSize.x, info->maskSize.y
+      );
+    } else glUniform1i(glGetUniformLocation(shader->program, "hasMask"), 0);
+    
+    // Send Object data
+    glUniform2f(
+      glGetUniformLocation(shader->program, "realPos"),
+      info->position.x, info->position.y
+    );
+
+    glUniform2f(
+      glGetUniformLocation(shader->program, "realSize"),
+      info->size.x, info->size.y
+    );
+
+    // Send resolution
+    glUniform2f(
+      glGetUniformLocation(shader->program, "resolution"),
+      Window::fbWidth, Window::fbHeight
+    );
+
+
     glBindVertexArray(VAO);
 
     float startX = info->position.x;

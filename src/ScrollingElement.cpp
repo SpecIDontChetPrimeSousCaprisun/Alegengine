@@ -20,6 +20,8 @@ namespace Aleg {
 
     for (Object* object : getChildren()) {
       object->position = glm::vec2(inset, y + inset) + scrollAmount;
+      object->setMask(realPosition, realSize);
+      object->size.x = realSize.x - (inset * 2);
       y += object->size.y;
     }
   }

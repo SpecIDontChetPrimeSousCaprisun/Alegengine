@@ -17,6 +17,15 @@ namespace Aleg {
   }
 
   DrawInfo* UIElement::beforeDrawing() {
-    return new DrawInfo(realPosition * glm::vec2(Window::fbWidth, Window::fbHeight), realSize * glm::vec2(Window::fbWidth, Window::fbHeight));
+    DrawInfo* info = new DrawInfo(realPosition * glm::vec2(Window::fbWidth, Window::fbHeight), realSize * glm::vec2(Window::fbWidth, Window::fbHeight));
+    MaskResult* maskInfo = getMask();
+
+    info->hasMask = maskInfo->hasMask;
+    if (maskInfo->hasMask) {
+      info->maskPosition = maskInfo->position * glm::vec2(Window::fbWidth, Window::fbHeight);
+      info->maskSize = maskInfo->size * glm::vec2(Window::fbWidth, Window::fbHeight);
+    }
+
+    return info;
   }
 }
