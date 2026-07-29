@@ -12,6 +12,7 @@ namespace Aleg {
   int Window::fbHeight = 480;
   double Window::deltaTime = 0;
   double Window::lastFrame = 0;
+  std::vector<std::function<void()>> Window::frameCallbacks;
   std::vector<std::function<void(double, double)>> Window::scrollCallbacks;
 
   int Window::init() {
@@ -42,7 +43,7 @@ namespace Aleg {
         -1.0f, 1.0f
     );*/
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    
+
     glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
       for (std::function<void(double, double)> callback : scrollCallbacks) {
         callback(xoffset, yoffset);
@@ -73,11 +74,9 @@ namespace Aleg {
         TextElement::recalculateAllFonts();
       }
 
-      // Update
-      Object::updateAll();
-
-      // Draw
-      Object::drawAll();
+      for (std::function<void()> func : frameCallbacks) {
+        func();
+      }
 
       glfwSwapBuffers(window);
     }

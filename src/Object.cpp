@@ -8,6 +8,14 @@ namespace Aleg {
 
   void Object::init() {
     shader = new Shader("shaders/Vertex.glsl", "shaders/Frag.glsl");
+
+    Window::frameCallbacks.push_back([]() {
+      Object::updateAll();
+    });
+
+    Window::frameCallbacks.push_back([]() {
+      Object::drawAll();
+    });
   } 
 
   Object::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex) 

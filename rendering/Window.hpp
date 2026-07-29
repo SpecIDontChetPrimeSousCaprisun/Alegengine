@@ -18,6 +18,7 @@ namespace Aleg {
     static int fbHeight;
     static double deltaTime;
     static double lastFrame;
+    static std::vector<std::function<void()>> frameCallbacks;
     static std::vector<std::function<void(double, double)>> scrollCallbacks;
   };
 }
