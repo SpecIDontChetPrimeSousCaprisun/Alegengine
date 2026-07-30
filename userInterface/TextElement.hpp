@@ -23,7 +23,6 @@ namespace Aleg {
                 std::string text);
 
     static void init();
-    static void recalculateAllFonts();
 
     void recalculateTextWidth();
     void recalculateFontHeight();

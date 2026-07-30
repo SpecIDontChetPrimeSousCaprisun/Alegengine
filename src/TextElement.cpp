@@ -8,12 +8,6 @@ namespace Aleg {
     shader = new Shader("shaders/TextVertex.glsl", "shaders/TextFrag.glsl");
   }
 
-  void TextElement::recalculateAllFonts() {
-    for (TextElement* element : elements) {
-      element->recalculateFontHeight();
-    }
-  }
-
   TextElement::TextElement(glm::vec2 position,
                            glm::vec2 size,
                            float transparency,

@@ -93,14 +93,6 @@ namespace Aleg {
   }
 
   void Object::afterDrawing(DrawInfo* info) {}
- 
-  void Object::drawAll() {
-    for (auto& [zIndex, objectVector] : objects) {
-      for (Object* object : objectVector) {
-        object->draw();
-      }
-    }
-  }
 
   void Object::draw() {
     if (!visible) return;
@@ -244,16 +236,6 @@ namespace Aleg {
   }
 
   // update
-  void Object::updateAll() {
-    deletePendingObjects();
-
-    for (auto& [zIndex, objectVector] : objects) {
-      for (Object* object : objectVector) {
-        object->update();
-      }
-    }
-  }
-
   void Object::beforeUpdate() {}
   void Object::afterUpdate() {}
 

@@ -26,8 +26,6 @@ namespace Aleg {
   class Object {
   public:
     static void init();
-    static void drawAll();
-    static void updateAll();
     static void deletePendingObjects();
     static CollisionResult checkCollision(Object* a, Object* b);
     static RaycastResult* raycast(glm::vec2 origin,
