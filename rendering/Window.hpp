@@ -31,8 +31,8 @@ namespace Aleg {
     static Logger* logger;
     static Window* currentWindow;
     static std::map<std::string, Window*> windows;
-    static std::vector<std::function<void()>> frameCallbacks;
-    static std::vector<std::function<void(double, double)>> scrollCallbacks;
+    static std::vector<std::function<void(Window*)>> frameCallbacks;
+    static std::vector<std::function<void(Window*, double, double)>> scrollCallbacks;
   private:
     void update();
   };

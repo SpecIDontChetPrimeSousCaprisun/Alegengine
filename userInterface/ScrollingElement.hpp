@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Alegengine/userInterface/UIElement.hpp>
+#include <Alegengine/rendering/Window.hpp>
 #include <string>
 
 namespace Aleg {
@@ -19,7 +20,7 @@ namespace Aleg {
   private:
     void initObject();
     void listLayout();
-    void scrollCallback(double x, double y);
+    void scrollCallback(Window* win, double x, double y);
 
     glm::vec2 scrollAmount = glm::vec2(0.0f, 0.0f);
   };

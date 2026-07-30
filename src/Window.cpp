@@ -9,8 +9,8 @@ namespace Aleg {
   Logger* Window::logger = new Logger("Window");
   Window* Window::currentWindow = nullptr;
   std::map<std::string, Window*> Window::windows;
-  std::vector<std::function<void()>> Window::frameCallbacks;
-  std::vector<std::function<void(double, double)>> Window::scrollCallbacks;
+  std::vector<std::function<void(Window*)>> Window::frameCallbacks;
+  std::vector<std::function<void(Window*, double, double)>> Window::scrollCallbacks;
 
   Window::Window(float width, float height, std::string name, std::string mapName)
     : fbWidth(width), fbHeight(height) {
@@ -40,9 +40,12 @@ namespace Aleg {
     );*/
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+    glfwSetWindowUserPointer(window, this);
     glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
-      for (std::function<void(double, double)> callback : scrollCallbacks) {
-        callback(xoffset, yoffset);
+      Window* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+
+      for (std::function<void(Window*, double, double)> callback : scrollCallbacks) {
+        callback(self, xoffset, yoffset);
       }
     });
 
@@ -110,8 +113,8 @@ namespace Aleg {
 
     parent->recursivelyDrawChildren();
 
-    for (std::function<void()> func : frameCallbacks) {
-      func();
+    for (std::function<void(Window*)> func : frameCallbacks) {
+      func(this);
     }
 
     glfwSwapBuffers(window);

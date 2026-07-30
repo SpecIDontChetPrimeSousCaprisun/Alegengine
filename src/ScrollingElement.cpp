@@ -8,7 +8,7 @@ namespace Aleg {
     : UIElement(position, size, transparency, texPath, zIndex) {initObject();}
 
   void ScrollingElement::initObject() {
-    Window::scrollCallbacks.push_back([this](double x, double y) {scrollCallback(x, y);});
+    Window::scrollCallbacks.push_back([this](Window* win, double x, double y) {scrollCallback(win, x, y);});
   }
 
   void ScrollingElement::beforeUpdate() {
@@ -26,7 +26,8 @@ namespace Aleg {
     }
   }
 
-  void ScrollingElement::scrollCallback(double x, double y) {
+  void ScrollingElement::scrollCallback(Window* win, double x, double y) {
+    if (win != window) return;
     if (!verticalScrolling && !horizontalScrolling) return;
 
     double mouseX;
