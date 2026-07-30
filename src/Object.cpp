@@ -8,36 +8,22 @@ namespace Aleg {
 
   void Object::init() {
     shader = new Shader("shaders/Vertex.glsl", "shaders/Frag.glsl");
-
-    Window::frameCallbacks.push_back([]() {
-      Object::updateAll();
-    });
-
-    Window::frameCallbacks.push_back([]() {
-      Object::drawAll();
-    });
   } 
 
-  Object::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex) 
-    : position(position), size(size), transparency(transparency), color(color), usesColor(true), zIndex(zIndex) {
+  Object::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window) 
+    : position(position), size(size), transparency(transparency), color(color), usesColor(true), zIndex(zIndex), window(window) {
     initObject();
   }
 
-  Object::Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex) 
-    : position(position), size(size), transparency(transparency), usesColor(false), texture(FileLoader::loadTexture(texPath)), zIndex(zIndex) {
+  Object::Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex, Window* window) 
+    : position(position), size(size), transparency(transparency), usesColor(false), texture(FileLoader::loadTexture(texPath)), zIndex(zIndex), window(window) {
     initObject();
-  }
-
-  Object::~Object() {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-
-    if (!usesColor) {
-      //glDeleteTextures(1, &texture);
-    }
   }
 
   void Object::initObject() {
+    if (!window) window = Window::currentWindow;
+    glfwMakeContextCurrent(window->window);
+
     float vertices[] = {
       // positions   // UVs
       0.0f, 0.0f,    0.0f, 0.0f,
@@ -87,15 +73,16 @@ namespace Aleg {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+    setParent(window->parent);
+
     objects[zIndex].push_back(this);
   }
 
   // draw
-
   DrawInfo* Object::beforeDrawing() {
     DrawInfo* info = new DrawInfo(realPosition, realSize); 
 
-    if (Camera::currentCamera) info->position -= Camera::currentCamera->realPosition;
+    if (window->cam) info->position -= window->cam->realPosition;
     if (hasMask) {
       info->hasMask = true;
       info->maskPosition = maskPosition;
@@ -170,8 +157,8 @@ namespace Aleg {
     // Orthographic projection
     glm::mat4 projection = glm::ortho(
       0.0f,
-      (float)Window::fbWidth,
-      (float)Window::fbHeight,
+      (float)window->fbWidth,
+      (float)window->fbHeight,
       0.0f,
       -1.0f,
       1.0f
@@ -243,7 +230,7 @@ namespace Aleg {
     // Send resolution
     glUniform2f(
       glGetUniformLocation(shader->program, "resolution"),
-      Window::fbWidth, Window::fbHeight
+      window->fbWidth, window->fbHeight
     );
 
     // Send texture
@@ -280,9 +267,9 @@ namespace Aleg {
 
     if (anchored) return;
 
-    if (type == "side") linearVelocity += glm::vec2(0.0f, gravity) * (float)Window::deltaTime;
-    position += linearVelocity * (float)Window::deltaTime;
-    rotation += angularVelocity * (float)Window::deltaTime;
+    if (type == "side") linearVelocity += glm::vec2(0.0f, gravity) * (float)window->deltaTime;
+    position += linearVelocity * (float)window->deltaTime;
+    rotation += angularVelocity * (float)window->deltaTime;
 
     if (parent) realPosition = parent->realPosition + position;
     else realPosition = position;
@@ -402,6 +389,16 @@ namespace Aleg {
     }
   }
 
+  Object::~Object() {
+    removeParent();
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+
+    if (!usesColor) {
+      glDeleteTextures(1, &texture);
+    }
+  }
+
   void Object::pendDelete() {
     pendingDelete = true;
   }
@@ -507,6 +504,16 @@ namespace Aleg {
 
   // parenting
   void Object::setParent(Object* parent) {
+    removeParent();
+
+    if (!parent) return;
+    if (parent == this) return;
+
+    this->parent = parent;
+    this->parent->children.push_back(this);
+  }
+
+  void Object::removeParent() {
     if (this->parent) {
       for (auto it = this->parent->children.begin(); it != this->parent->children.end(); ) {
         if (*it == this) {
@@ -516,10 +523,9 @@ namespace Aleg {
           ++it;
         }
       }
-    }
 
-    this->parent = parent;
-    this->parent->children.push_back(this);
+      this->parent = nullptr;
+    }
   }
 
   Object* Object::getParent() {

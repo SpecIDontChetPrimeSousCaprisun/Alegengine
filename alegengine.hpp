@@ -5,6 +5,7 @@
 #include "rendering/Camera.hpp"
 
 #include "objects/Object.hpp"
+#include "objects/ParentObject.hpp"
 #include "objects/DrawInfo.hpp"
 #include "objects/MaskResult.hpp"
 #include "objects/CollisionGroup.hpp"

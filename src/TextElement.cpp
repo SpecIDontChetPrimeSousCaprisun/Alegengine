@@ -70,8 +70,8 @@ namespace Aleg {
     glUseProgram(shader->program);
 
     glm::mat4 projection = glm::ortho(
-      0.0f, (float)Window::fbWidth,
-      (float)Window::fbHeight, 0.0f,
+      0.0f, (float)window->fbWidth,
+      (float)window->fbHeight, 0.0f,
       -1.0f, 1.0f
     );
 
@@ -149,9 +149,8 @@ namespace Aleg {
     // Send resolution
     glUniform2f(
       glGetUniformLocation(shader->program, "resolution"),
-      Window::fbWidth, Window::fbHeight
+      window->fbWidth, window->fbHeight
     );
-
 
     glBindVertexArray(VAO);
 
@@ -204,6 +203,8 @@ namespace Aleg {
   }
 
   void TextElement::recalculateTextWidth() {
+    if (Window::currentWindow != window) return;
+
     DrawInfo* info = beforeDrawing();
 
     float startX = info->position.x;
@@ -232,6 +233,7 @@ namespace Aleg {
   }
 
   void TextElement::recalculateFontHeight() {
+    if (realSize.x < 0.0f) return;
     if (font) delete font;
 
     DrawInfo* info = beforeDrawing();
@@ -242,7 +244,7 @@ namespace Aleg {
     recalculateTextWidth();
 
     if (textWidth > info->size.x) {
-      delete font;
+      delete font; 
       font = new Font(fontPath, (fontHeight * info->size.x) / textWidth);
     }
   }

@@ -31,7 +31,7 @@ namespace Aleg {
     double mouseX;
     double mouseY;
 
-    glfwGetCursorPos(Window::window, &mouseX, &mouseY);
+    glfwGetCursorPos(window->window, &mouseX, &mouseY);
 
     DrawInfo* info = beforeDrawing();
 
@@ -41,10 +41,10 @@ namespace Aleg {
         info->position.y + info->size.y > mouseY) {
       colorChange = glm::vec3(-0.1f, -0.1f, -0.1f);
 
-      if (glfwGetMouseButton(Window::window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && (!pressed || retriggerOnEchoes)) {
+      if (glfwGetMouseButton(window->window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && (!pressed || retriggerOnEchoes)) {
         pressed = true;
         callback();
-      } else if (glfwGetMouseButton(Window::window, GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS) {
+      } else if (glfwGetMouseButton(window->window, GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS) {
         pressed = false;
       }
     } else {

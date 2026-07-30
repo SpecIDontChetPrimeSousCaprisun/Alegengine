@@ -32,7 +32,7 @@ namespace Aleg {
     double mouseX;
     double mouseY;
 
-    glfwGetCursorPos(Window::window, &mouseX, &mouseY);
+    glfwGetCursorPos(window->window, &mouseX, &mouseY);
 
     DrawInfo* info = beforeDrawing();
 
@@ -41,9 +41,9 @@ namespace Aleg {
         info->position.y < mouseY &&
         info->position.y + info->size.y > mouseY) {
       if (verticalScrolling) {
-        scrollAmount.y += (y / Window::fbHeight) * sens;
+        scrollAmount.y += (y / window->fbHeight) * sens;
       } else if (horizontalScrolling) {
-        scrollAmount.x += (y / Window::fbHeight) * sens;
+        scrollAmount.x += (y / window->fbHeight) * sens;
       }
     }
   }

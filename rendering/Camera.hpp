@@ -8,8 +8,6 @@
 namespace Aleg {
   class Camera : public Object {
   public:
-    static Camera* currentCamera;
-
     Camera(glm::vec2 position);
   protected:
     DrawInfo* beforeDrawing() override;

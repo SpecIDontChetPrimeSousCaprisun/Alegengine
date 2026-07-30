@@ -6,23 +6,21 @@
 #include <iostream>
 
 namespace Aleg {
-  GLFWwindow* Window::window = nullptr;
-  bool Window::inGame = true;
-  int Window::fbWidth = 600;
-  int Window::fbHeight = 480;
-  double Window::deltaTime = 0;
-  double Window::lastFrame = 0;
+  Logger* Window::logger = new Logger("Window");
+  Window* Window::currentWindow = nullptr;
+  std::map<std::string, Window*> Window::windows;
   std::vector<std::function<void()>> Window::frameCallbacks;
   std::vector<std::function<void(double, double)>> Window::scrollCallbacks;
 
-  int Window::init() {
-    if (!glfwInit()) return -1;
-
-    window = glfwCreateWindow(fbWidth, fbHeight, "Alegengine", NULL, NULL);
+  Window::Window(float width, float height, std::string name, std::string mapName)
+    : fbWidth(width), fbHeight(height) {
+    GLFWwindow* shareWith = currentWindow ? currentWindow->window : nullptr;
+    window = glfwCreateWindow(width, height, name.c_str(), NULL, shareWith);
 
     if (!window) {
       glfwTerminate();
-      return -1;
+      logger->error("Failed to open window");
+      return;
     }
 
     glfwMakeContextCurrent(window);
@@ -30,10 +28,8 @@ namespace Aleg {
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
       std::cerr << "Failed to initialize GLAD" << std::endl;
-      return -1;
+      return;
     }
-
-    glClearColor(0.2f, 0.4f, 0.6f, 1.0f);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -50,37 +46,74 @@ namespace Aleg {
       }
     });
 
+    Window::currentWindow = this;
+    parent = new ParentObject();
+    cam = new Camera(glm::vec2(0.0f, 0.0f));
+    windows[mapName] = this;
+  }
+
+  int Window::init() {
+    if (!glfwInit()) return -1;
+
+    currentWindow = new Window(600, 400, "Game", "main");
+
     return 0;
   }
 
   void Window::mainLoop() {
-    while (inGame && !glfwWindowShouldClose(window)) {
-      glfwPollEvents();
+    while (true) {
+      bool hasUpdated = false;
 
-      double currentFrame = glfwGetTime();
-      deltaTime = currentFrame - lastFrame;
-      lastFrame = currentFrame;
+      Object::deletePendingObjects();
 
-      if (deltaTime > 0.1) deltaTime = 0.1;
+      for (auto& [name, window] : windows) {
+        if (!window->shouldUpdate || glfwWindowShouldClose(window->window)) {
+          glfwDestroyWindow(window->window);
+          windows.erase(name);
+        }
 
-      int oldFbWidth = fbWidth;
-      int oldFbHeight = fbHeight;
-
-      glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
-      glViewport(0, 0, fbWidth, fbHeight);
-      glClear(GL_COLOR_BUFFER_BIT); 
-
-      if (fbWidth != oldFbWidth || fbHeight != oldFbHeight) {
-        TextElement::recalculateAllFonts();
+        hasUpdated = true;
+        window->update();
       }
 
-      for (std::function<void()> func : frameCallbacks) {
-        func();
-      }
-
-      glfwSwapBuffers(window);
+      if (!hasUpdated) break;
     }
 
     glfwTerminate();
+  }
+
+  void Window::update() {
+    glfwMakeContextCurrent(window);
+    currentWindow = this;
+
+    glfwPollEvents();
+
+    double currentFrame = glfwGetTime();
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+
+    if (deltaTime > 0.1) deltaTime = 0.1;
+
+    int oldFbWidth = fbWidth;
+    int oldFbHeight = fbHeight;
+
+    glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+    glViewport(0, 0, fbWidth, fbHeight);
+    glClear(GL_COLOR_BUFFER_BIT); 
+
+    parent->update();
+    parent->recursivelyUpdateChildren();
+
+    if (fbWidth != oldFbWidth || fbHeight != oldFbHeight) {
+      parent->recursivelyRecalculateFonts();
+    }
+
+    parent->recursivelyDrawChildren();
+
+    for (std::function<void()> func : frameCallbacks) {
+      func();
+    }
+
+    glfwSwapBuffers(window);
   }
 }
