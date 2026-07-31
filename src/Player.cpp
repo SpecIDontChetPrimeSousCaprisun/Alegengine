@@ -36,13 +36,15 @@ namespace Aleg {
       lastJump = 0.1f;
     }
 
-    if (state == "jumping") {
-      RaycastResult* result = Object::raycast(realPosition + glm::vec2(realSize.x / 2, realSize.y),
+    RaycastResult* result = Object::raycast(realPosition + glm::vec2(realSize.x / 2, realSize.y),
                                               glm::vec2(0.0f, 1.0f),
                                               window);
 
+    if (state == "jumping") {
       if (result && lastJump <= 0.0f) state = "idle";
       else lastJump -= window->deltaTime;
+    } else if (state == "idle") {
+      if (!result) state = "jumping";
     }
   }
 }

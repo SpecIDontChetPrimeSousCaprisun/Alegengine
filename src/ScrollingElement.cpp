@@ -29,18 +29,10 @@ namespace Aleg {
   void ScrollingElement::scrollCallback(Window* win, double x, double y) {
     if (win != window) return;
     if (!verticalScrolling && !horizontalScrolling) return;
+    
+    recalculateFocus();
 
-    double mouseX;
-    double mouseY;
-
-    glfwGetCursorPos(window->window, &mouseX, &mouseY);
-
-    DrawInfo* info = beforeDrawing();
-
-    if (info->position.x < mouseX &&
-        info->position.x + info->size.x > mouseX &&
-        info->position.y < mouseY &&
-        info->position.y + info->size.y > mouseY) {
+    if (focused) {
       if (verticalScrolling) {
         scrollAmount.y += (y / window->fbHeight) * sens;
       } else if (horizontalScrolling) {

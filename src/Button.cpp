@@ -28,17 +28,9 @@ namespace Aleg {
   }
 
   void Button::beforeUpdate() {
-    double mouseX;
-    double mouseY;
+    recalculateFocus();
 
-    glfwGetCursorPos(window->window, &mouseX, &mouseY);
-
-    DrawInfo* info = beforeDrawing();
-
-    if (info->position.x < mouseX &&
-        info->position.x + info->size.x > mouseX &&
-        info->position.y < mouseY &&
-        info->position.y + info->size.y > mouseY) {
+    if (focused) {
       colorChange = glm::vec3(-0.1f, -0.1f, -0.1f);
 
       if (glfwGetMouseButton(window->window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS && (!pressed || retriggerOnEchoes)) {
