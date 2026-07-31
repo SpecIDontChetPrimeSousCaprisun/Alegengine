@@ -3,6 +3,7 @@
 #include <Alegengine/helpers/Logger.hpp>
 #include <Alegengine/rendering/Camera.hpp>
 #include <Alegengine/objects/ParentObject.hpp>
+#include <Alegengine/objects/Player.hpp>
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

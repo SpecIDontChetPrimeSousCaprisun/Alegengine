@@ -261,6 +261,7 @@ namespace Aleg {
     for (auto& [zIndex, objectVector] : objects) {
       for (Object* object : objectVector) {
         if (object == this) continue;
+        if (object->window != window) continue;
         if (!object->canCollide) continue;
         if (object->collisionGroup != mask) continue;
 
@@ -392,7 +393,10 @@ namespace Aleg {
   // raycast
   RaycastResult* Object::raycast(glm::vec2 origin,
                                  glm::vec2 dir,
+                                 Window* window,
                                  CollisionGroup mask) {
+    if (!window) window = Window::currentWindow;
+
     Object* closestObj = nullptr;
     float maxDist = glm::length(dir);
     float closestT = maxDist;
@@ -403,6 +407,7 @@ namespace Aleg {
       for (Object* object : objectsVector) {
         if (!object->canCollide) continue;
         if (object->collisionGroup != mask) continue;
+        if (object->window != window) continue;
 
         float rad = object->rotation * glm::pi<float>() / 180.0f;
 

@@ -2,10 +2,14 @@
 
 namespace Aleg {
   Player::Player(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex) 
-    : Object(position, size, transparency, color, zIndex) {}
+    : Object(position, size, transparency, color, zIndex) {
+    collisionGroup = CollisionGroups::Player;
+  }
 
   Player::Player(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex) 
-    : Object(position, size, transparency, texPath, zIndex) {}
+    : Object(position, size, transparency, texPath, zIndex) {
+    collisionGroup = CollisionGroups::Player;
+  }
 
   void Player::beforeUpdate() {
     if (glfwGetKey(window->window, GLFW_KEY_D) == GLFW_PRESS) {
@@ -34,7 +38,8 @@ namespace Aleg {
 
     if (state == "jumping") {
       RaycastResult* result = Object::raycast(realPosition + glm::vec2(realSize.x / 2, realSize.y),
-                                              glm::vec2(0.0f, 1.0f));
+                                              glm::vec2(0.0f, 1.0f),
+                                              window);
 
       if (result && lastJump <= 0.0f) state = "idle";
       else lastJump -= window->deltaTime;

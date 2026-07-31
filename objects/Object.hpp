@@ -30,6 +30,7 @@ namespace Aleg {
     static CollisionResult checkCollision(Object* a, Object* b);
     static RaycastResult* raycast(glm::vec2 origin,
                                   glm::vec2 dir,
+                                  Window* window = nullptr,
                                   CollisionGroup mask = CollisionGroups::Default);
 
     Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window = nullptr); 
