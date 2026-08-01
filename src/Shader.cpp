@@ -34,10 +34,10 @@ namespace Aleg {
 
     if (!success) {
       glGetProgramInfoLog(
-          program,
-          512,
-          NULL,
-          infoLog
+        program,
+        512,
+        NULL,
+        infoLog
       );
 
       std::ostringstream ss;

@@ -2,6 +2,7 @@
 
 #include <Alegengine/helpers/Logger.hpp>
 #include <Alegengine/rendering/Camera.hpp>
+#include <Alegengine/rendering/ScreenEffect.hpp>
 #include <Alegengine/objects/ParentObject.hpp>
 #include <Alegengine/objects/Player.hpp>
 #include <iostream>
@@ -25,6 +26,7 @@ namespace Aleg {
     int fbHeight;
     double deltaTime = 0;
     double lastFrame = 0;
+    std::vector<ScreenEffect*> screenEffects;
 
     static void mainLoop();
     static int init();
@@ -36,5 +38,8 @@ namespace Aleg {
     static std::vector<std::function<void(Window*, double, double)>> scrollCallbacks;
   private:
     void update();
+    void makeSceneTexture();
+
+    unsigned int VAO, VBO, sceneTexture, sceneFBO;
   };
 }

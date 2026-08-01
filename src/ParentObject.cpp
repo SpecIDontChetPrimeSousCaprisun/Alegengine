@@ -8,7 +8,7 @@ namespace Aleg {
     anchored = true;
   }
 
-  void ParentObject::setParent(Object* parent) {
+  void ParentObject::setParent(Object*) {
     logger->warn("Attempting to set parent of parent object");
   }
 

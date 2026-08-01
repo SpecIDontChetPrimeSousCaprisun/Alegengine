@@ -26,7 +26,7 @@ namespace Aleg {
     }
   }
 
-  void ScrollingElement::scrollCallback(Window* win, double x, double y) {
+  void ScrollingElement::scrollCallback(Window* win, double, double y) {
     if (win != window) return;
     if (!verticalScrolling && !horizontalScrolling) return;
     

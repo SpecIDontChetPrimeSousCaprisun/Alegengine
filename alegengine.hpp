@@ -3,6 +3,7 @@
 #include "rendering/Window.hpp"
 #include "rendering/Shader.hpp"
 #include "rendering/Camera.hpp"
+#include "rendering/ScreenEffect.hpp"
 
 #include "objects/Object.hpp"
 #include "objects/ParentObject.hpp"

@@ -49,10 +49,106 @@ namespace Aleg {
       }
     });
 
+    // Effects
+    float vertices[] = {
+      // position      texcoords
+
+      -1.0f,  1.0f,    0.0f, 1.0f,
+      -1.0f, -1.0f,    0.0f, 0.0f,
+      1.0f, -1.0f,    1.0f, 0.0f,
+
+      -1.0f,  1.0f,    0.0f, 1.0f,
+      1.0f, -1.0f,    1.0f, 0.0f,
+      1.0f,  1.0f,    1.0f, 1.0f
+    };
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(
+      GL_ARRAY_BUFFER,
+      sizeof(vertices),
+      vertices,
+      GL_STATIC_DRAW
+    );
+
+    // position
+    glVertexAttribPointer(
+      0,
+      2,
+      GL_FLOAT,
+      GL_FALSE,
+      4 * sizeof(float),
+      (void*)0
+    );
+    glEnableVertexAttribArray(0);
+
+    // UV
+    glVertexAttribPointer(
+      1,
+      2,
+      GL_FLOAT,
+      GL_FALSE,
+      4 * sizeof(float),
+      (void*)(2 * sizeof(float))
+    );
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    makeSceneTexture();
+
     Window::currentWindow = this;
     parent = new ParentObject();
     cam = new Camera(glm::vec2(0.0f, 0.0f));
     windows[mapName] = this;
+  }
+
+  void Window::makeSceneTexture() {
+    glGenTextures(1, &sceneTexture);
+    glBindTexture(GL_TEXTURE_2D, sceneTexture);
+
+    glTexImage2D(
+      GL_TEXTURE_2D,
+      0,
+      GL_RGB,
+      fbWidth,
+      fbHeight,
+      0,
+      GL_RGB,
+      GL_UNSIGNED_BYTE,
+      nullptr
+    );
+
+    // Filtering
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Wrapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glGenFramebuffers(1, &sceneFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
+
+    // create sceneTexture
+    glFramebufferTexture2D(
+      GL_FRAMEBUFFER,
+      GL_COLOR_ATTACHMENT0,
+      GL_TEXTURE_2D,
+      sceneTexture,
+      0
+    );
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        logger->warn("Framebuffer is incomplete!");
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 
   int Window::init() {
@@ -108,10 +204,36 @@ namespace Aleg {
     parent->recursivelyUpdateChildren();
 
     if (fbWidth != oldFbWidth || fbHeight != oldFbHeight) {
+      makeSceneTexture();
       parent->recursivelyRecalculateFonts();
     }
 
-    parent->recursivelyDrawChildren();
+    if (!screenEffects.empty()) {
+      glBindFramebuffer(GL_FRAMEBUFFER, sceneFBO);
+      glClear(GL_COLOR_BUFFER_BIT);
+
+      glViewport(0, 0, fbWidth, fbHeight);
+    }
+
+    parent->recursivelyDrawChildren(); // Draw
+
+    if (!screenEffects.empty()) {
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+      glViewport(0, 0, fbWidth, fbHeight);
+      glClear(GL_COLOR_BUFFER_BIT);
+
+      for (ScreenEffect* effect : screenEffects) {
+        glUseProgram(effect->shader->program);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, sceneTexture);
+        
+        effect->passShaderInfo();
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+      }
+    }
 
     for (std::function<void(Window*)> func : frameCallbacks) {
       func(this);

@@ -11,12 +11,12 @@ namespace Aleg {
   } 
 
   Object::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window) 
-    : position(position), size(size), transparency(transparency), color(color), usesColor(true), zIndex(zIndex), window(window) {
+    : position(position), size(size), zIndex(zIndex), transparency(transparency), color(color), usesColor(true), window(window) {
     initObject();
   }
 
   Object::Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex, Window* window) 
-    : position(position), size(size), transparency(transparency), usesColor(false), texture(FileLoader::loadTexture(texPath)), zIndex(zIndex), window(window) {
+    : position(position), size(size), zIndex(zIndex), transparency(transparency), usesColor(false), window(window), texture(FileLoader::loadTexture(texPath)) {
     initObject();
   }
 
@@ -92,7 +92,7 @@ namespace Aleg {
     return info;
   }
 
-  void Object::afterDrawing(DrawInfo* info) {}
+  void Object::afterDrawing(DrawInfo*) {}
 
   void Object::draw() {
     if (!visible) return;
