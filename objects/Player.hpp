@@ -5,8 +5,8 @@
 namespace Aleg {
   class Player : public Object {
   public:
-    Player(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex);
-    Player(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex);
+    Player(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window = nullptr);
+    Player(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex, Window* window = nullptr);
 
     float speedMult = 1.0f;
   protected:

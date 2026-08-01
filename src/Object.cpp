@@ -1,14 +1,14 @@
 #include <Alegengine/alegengine.hpp>
 #include <cmath>
+#include <sstream>
 
 namespace Aleg {
   std::map<float, std::vector<Object*>> Object::objects;
-  Shader* Object::shader;
   Logger* Object::logger = new Logger("Object");
 
   void Object::init() {
-    shader = new Shader("shaders/Vertex.glsl", "shaders/Frag.glsl");
-  } 
+    Window::shaderInfos.push_back(new ShaderInfo("objShader", "shaders/Vertex.glsl", "shaders/Frag.glsl"));
+  }
 
   Object::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window) 
     : position(position), size(size), zIndex(zIndex), transparency(transparency), color(color), usesColor(true), window(window) {
@@ -23,6 +23,7 @@ namespace Aleg {
   void Object::initObject() {
     if (!window) window = Window::currentWindow;
     glfwMakeContextCurrent(window->window);
+    shader = window->shaders["objShader"];
 
     float vertices[] = {
       // positions   // UVs
@@ -96,7 +97,10 @@ namespace Aleg {
 
   void Object::draw() {
     if (!visible) return;
+    if (!shader) shader = window->shaders["objShader"];
+    if (!shader) return;
 
+    glfwMakeContextCurrent(window->window);
     glUseProgram(shader->program);
 
     DrawInfo* info = beforeDrawing();
@@ -109,7 +113,6 @@ namespace Aleg {
     // Draw
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-
     glBindVertexArray(0);
 
     afterDrawing(info);
@@ -487,6 +490,38 @@ namespace Aleg {
     }
 
     return nullptr;
+  }
+
+  // Object in bounds
+  std::vector<Object*> Object::getObjectsInBounds(glm::vec2 position,
+                                                  glm::vec2 size,
+                                                  float rotation,
+                                                  Window* window,
+                                                  CollisionGroup mask) {
+    if (!window) window = Window::currentWindow;
+
+    Object* tempObj = new Object(position, size, 1.0f, glm::vec3(0.0f, 1.0f, 0.0f), 10000000.0f, window);
+    tempObj->rotation = rotation;
+    tempObj->anchored = true;
+    tempObj->canCollide = false;
+    tempObj->collisionGroup = CollisionGroups::Temp;
+    tempObj->update();
+
+    std::vector<Object*> result;
+
+    for (auto& [zIndex, objectVector] : objects) {
+      for (Object* obj : objectVector) {
+        if (obj == tempObj) continue;
+        if (obj->window != tempObj->window) continue;
+        if (obj->collisionGroup != mask) continue;
+
+        if (checkCollision(tempObj, obj).hit) {
+          result.push_back(obj);
+        }
+      }
+    }
+
+    return result;
   }
 
   // parenting

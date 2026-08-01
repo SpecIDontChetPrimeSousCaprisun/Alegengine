@@ -7,6 +7,9 @@
 namespace Aleg {
   Logger* Shader::logger = new Logger("Shader");
 
+  ShaderInfo::ShaderInfo(std::string name, std::string vertexPath, std::string fragPath) 
+    : name(name), vertexPath(vertexPath), fragPath(fragPath) {}
+
   Shader::Shader(std::string vertexPath, std::string fragPath) {
     std::string vertexCode = FileLoader::loadFile(vertexPath);
     std::string fragCode = FileLoader::loadFile(fragPath);

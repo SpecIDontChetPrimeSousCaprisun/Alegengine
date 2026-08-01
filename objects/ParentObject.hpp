@@ -14,6 +14,7 @@ namespace Aleg {
     void recursivelyUpdateChildren();
     void recursivelyDrawChildren();
     void recursivelyRecalculateFonts();
+    void recursivelyDeleteChildren();
   private:
     static std::vector<Object*> getChildrenInZOrder(Object* obj);
     static void performRecursiveOperation(std::string operation, Object* obj);

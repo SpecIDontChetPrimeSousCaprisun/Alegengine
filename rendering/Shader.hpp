@@ -7,6 +7,15 @@
 #include <string>
 
 namespace Aleg {
+  class ShaderInfo {
+  public:
+    ShaderInfo(std::string name, std::string vertexPath, std::string fragPath);
+
+    std::string name;
+    std::string vertexPath;
+    std::string fragPath;
+  };
+
   class Shader {
   public:
     Shader(std::string vertexPath, std::string fragPath);

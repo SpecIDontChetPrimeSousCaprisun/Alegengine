@@ -1,13 +1,13 @@
 #include <Alegengine/alegengine.hpp>
 
 namespace Aleg {
-  Player::Player(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex) 
-    : Object(position, size, transparency, color, zIndex) {
+  Player::Player(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window)
+    : Object(position, size, transparency, color, zIndex, window) {
     collisionGroup = CollisionGroups::Player;
   }
 
-  Player::Player(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex) 
-    : Object(position, size, transparency, texPath, zIndex) {
+  Player::Player(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex, Window* window)
+    : Object(position, size, transparency, texPath, zIndex, window) {
     collisionGroup = CollisionGroups::Player;
   }
 
@@ -36,15 +36,16 @@ namespace Aleg {
       lastJump = 0.1f;
     }
 
-    RaycastResult* result = Object::raycast(realPosition + glm::vec2(realSize.x / 2, realSize.y),
-                                              glm::vec2(0.0f, 1.0f),
-                                              window);
+    std::vector<Object*> result = Object::getObjectsInBounds(realPosition + glm::vec2(0.0f, realSize.y),
+                                                             glm::vec2(realSize.x, 1.0f),
+                                                             0.0f,
+                                                             window);
 
     if (state == "jumping") {
-      if (result && lastJump <= 0.0f) state = "idle";
+      if (!result.empty() && lastJump <= 0.0f) state = "idle";
       else lastJump -= window->deltaTime;
     } else if (state == "idle") {
-      if (!result) state = "jumping";
+      if (result.empty()) state = "jumping";
     }
   }
 }

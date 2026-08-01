@@ -11,11 +11,11 @@ namespace Aleg {
   std::map<std::string, Window*> Window::windows;
   std::vector<std::function<void(Window*)>> Window::frameCallbacks;
   std::vector<std::function<void(Window*, double, double)>> Window::scrollCallbacks;
+  std::vector<ShaderInfo*> Window::shaderInfos;
 
   Window::Window(float width, float height, std::string name, std::string mapName)
     : fbWidth(width), fbHeight(height) {
-    GLFWwindow* shareWith = currentWindow ? currentWindow->window : nullptr;
-    window = glfwCreateWindow(width, height, name.c_str(), NULL, shareWith);
+    window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
 
     if (!window) {
       glfwTerminate();
@@ -102,6 +102,7 @@ namespace Aleg {
 
     makeSceneTexture();
     makePingpongBuffers();
+    recreateOlderShaders();
 
     Window::currentWindow = this;
     parent = new ParentObject();
@@ -175,6 +176,20 @@ namespace Aleg {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 
+  // Shaders
+  void Window::recreateOlderShaders() {
+    glfwMakeContextCurrent(window);
+    currentWindow = this;
+
+    for (ShaderInfo* info : shaderInfos) {
+      if (shaders[info->name]) continue; 
+
+      shaders[info->name] = new Shader(info->vertexPath, info->fragPath);
+    }
+  }
+
+  // Main functions
+
   int Window::init() {
     if (!glfwInit()) return -1;
 
@@ -189,14 +204,21 @@ namespace Aleg {
 
       Object::deletePendingObjects();
 
-      for (auto& [name, window] : windows) {
+      for (auto it = windows.begin(); it != windows.end(); ) {
+        Window* window = it->second;
+
         if (!window->shouldUpdate || glfwWindowShouldClose(window->window)) {
+          glfwMakeContextCurrent(window->window);
+          window->parent->recursivelyDeleteChildren();
           glfwDestroyWindow(window->window);
-          windows.erase(name);
+          it = windows.erase(it); // erase returns the next valid iterator — use it directly
+          delete window;
+          continue;
         }
 
         hasUpdated = true;
         window->update();
+        ++it;
       }
 
       if (!hasUpdated) break;
@@ -209,7 +231,16 @@ namespace Aleg {
     glfwMakeContextCurrent(window);
     currentWindow = this;
 
+    recreateOlderShaders();
     glfwPollEvents();
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR) {
+      std::ostringstream ss;
+      ss << "GL error after glfwPollEvents: " << err;
+
+      logger->error(ss.str());
+      return;
+    }
 
     double currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;
@@ -271,6 +302,7 @@ namespace Aleg {
         horizontal = !horizontal;
       }
     }
+
     for (std::function<void(Window*)> func : frameCallbacks) {
       func(this);
     }

@@ -3,6 +3,7 @@
 #include <Alegengine/helpers/Logger.hpp>
 #include <Alegengine/rendering/Camera.hpp>
 #include <Alegengine/rendering/ScreenEffect.hpp>
+#include <Alegengine/rendering/Shader.hpp>
 #include <Alegengine/objects/ParentObject.hpp>
 #include <Alegengine/objects/Player.hpp>
 #include <iostream>
@@ -27,7 +28,8 @@ namespace Aleg {
     double deltaTime = 0;
     double lastFrame = 0;
     std::vector<ScreenEffect*> screenEffects;
-
+    std::map<std::string, Shader*> shaders;
+ 
     static void mainLoop();
     static int init();
 
@@ -36,10 +38,12 @@ namespace Aleg {
     static std::map<std::string, Window*> windows;
     static std::vector<std::function<void(Window*)>> frameCallbacks;
     static std::vector<std::function<void(Window*, double, double)>> scrollCallbacks;
+    static std::vector<ShaderInfo*> shaderInfos;
   private:
     void update();
     void makeSceneTexture();
     void makePingpongBuffers();
+    void recreateOlderShaders();
 
     unsigned int VAO, VBO, sceneTexture, sceneFBO;
     unsigned int pingpongFBO[2];

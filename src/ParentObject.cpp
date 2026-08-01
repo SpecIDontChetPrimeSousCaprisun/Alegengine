@@ -24,6 +24,10 @@ namespace Aleg {
     performRecursiveOperation("update", this);
   }
 
+  void ParentObject::recursivelyDeleteChildren() {
+    performRecursiveOperation("delete", this);
+  }
+
   std::vector<Object*> ParentObject::getChildrenInZOrder(Object* obj) {
     std::vector<Object*> objs;
     std::map<float, std::vector<Object*>> sortedObjects;
@@ -45,6 +49,7 @@ namespace Aleg {
     for (Object* loopedObj : getChildrenInZOrder(obj)) {
       if (operation == "update") loopedObj->update();
       else if (operation == "draw") loopedObj->draw();
+      else if (operation == "delete") loopedObj->pendDelete();
       else if (operation == "font") {
         TextElement* txt = dynamic_cast<TextElement*>(loopedObj);
 

@@ -32,6 +32,11 @@ namespace Aleg {
                                   glm::vec2 dir,
                                   Window* window = nullptr,
                                   CollisionGroup mask = CollisionGroups::Default);
+    static std::vector<Object*> getObjectsInBounds(glm::vec2 position,
+                                                  glm::vec2 size,
+                                                  float rotation = 0.0f,
+                                                  Window* window = nullptr,
+                                                  CollisionGroup mask = CollisionGroups::Default);
 
     Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window = nullptr); 
     Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex, Window* window = nullptr);
@@ -85,7 +90,6 @@ namespace Aleg {
                                   glm::vec2 WHb);
   private:
     static std::map<float, std::vector<Object*>> objects;
-    static Shader* shader;
     static Logger* logger;
 
     unsigned int VAO, VBO, texture;
@@ -95,6 +99,7 @@ namespace Aleg {
     glm::vec2 maskSize;
     Object* parent = nullptr;
     std::vector<Object*> children;
+    Shader* shader = nullptr;
  
     void initObject();
     void removeParent();
