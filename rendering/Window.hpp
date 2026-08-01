@@ -19,8 +19,8 @@ namespace Aleg {
     Window(float width, float height, std::string name, std::string mapName);
 
     GLFWwindow* window;
-    ParentObject* parent;
-    Camera* cam;
+    ParentObject* parent = nullptr;
+    Camera* cam = nullptr;
     bool shouldUpdate = true;
     int fbWidth;
     int fbHeight;
@@ -39,7 +39,10 @@ namespace Aleg {
   private:
     void update();
     void makeSceneTexture();
+    void makePingpongBuffers();
 
     unsigned int VAO, VBO, sceneTexture, sceneFBO;
+    unsigned int pingpongFBO[2];
+    unsigned int pingpongTexture[2];
   };
 }

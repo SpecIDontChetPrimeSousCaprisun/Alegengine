@@ -101,6 +101,7 @@ namespace Aleg {
     glBindVertexArray(0);
 
     makeSceneTexture();
+    makePingpongBuffers();
 
     Window::currentWindow = this;
     parent = new ParentObject();
@@ -145,7 +146,30 @@ namespace Aleg {
     );
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        logger->warn("Framebuffer is incomplete!");
+        logger->error("Framebuffer is incomplete!");
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  }
+
+  void Window::makePingpongBuffers() {
+    glGenFramebuffers(2, pingpongFBO);
+    glGenTextures(2, pingpongTexture);
+
+    for (int i = 0; i < 2; i++) {
+      glBindTexture(GL_TEXTURE_2D, pingpongTexture[i]);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, fbWidth, fbHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+      glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
+      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongTexture[i], 0);
+
+      if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        logger->error("Pingpong framebuffer is incomplete!");
+      }
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -205,6 +229,7 @@ namespace Aleg {
 
     if (fbWidth != oldFbWidth || fbHeight != oldFbHeight) {
       makeSceneTexture();
+      makePingpongBuffers();
       parent->recursivelyRecalculateFonts();
     }
 
@@ -219,22 +244,33 @@ namespace Aleg {
 
     if (!screenEffects.empty()) {
       glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
       glViewport(0, 0, fbWidth, fbHeight);
       glClear(GL_COLOR_BUFFER_BIT);
 
-      for (ScreenEffect* effect : screenEffects) {
+      bool horizontal = true;
+      unsigned int inputTexture = sceneTexture; // first pass reads the original scene
+
+      for (size_t i = 0; i < screenEffects.size(); i++) {
+        ScreenEffect* effect = screenEffects[i];
+        bool isLastEffect = (i == screenEffects.size() - 1);
+
+        // Last effect writes to the real screen; others write to a ping-pong buffer
+        glBindFramebuffer(GL_FRAMEBUFFER, isLastEffect ? 0 : pingpongFBO[horizontal]);
+        if (!isLastEffect) glClear(GL_COLOR_BUFFER_BIT);
+
         glUseProgram(effect->shader->program);
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, sceneTexture);
-        
+        glBindTexture(GL_TEXTURE_2D, inputTexture); // read from PREVIOUS pass's output
+
         effect->passShaderInfo();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        inputTexture = pingpongTexture[horizontal]; // next effect reads what we just wrote
+        horizontal = !horizontal;
       }
     }
-
     for (std::function<void(Window*)> func : frameCallbacks) {
       func(this);
     }
