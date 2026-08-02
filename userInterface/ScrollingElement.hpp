@@ -17,11 +17,14 @@ namespace Aleg {
     std::string layout = "List"; // Options are : List, Grid and None (see docs for more)
   protected:
     void beforeUpdate() override;
+    void afterUpdate() override;
   private:
     void initObject();
     void listLayout();
     void scrollCallback(Window* win, double x, double y);
 
     glm::vec2 scrollAmount = glm::vec2(0.0f, 0.0f);
+    UIElement* horizontalScrollbar;
+    UIElement* verticalScrollbar;
   };
 }

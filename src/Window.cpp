@@ -13,6 +13,21 @@ namespace Aleg {
   std::vector<std::function<void(Window*, double, double)>> Window::scrollCallbacks;
   std::vector<ShaderInfo*> Window::shaderInfos;
 
+  void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+                                  GLsizei length, const GLchar* message, const void* userParam) {
+    // Filter out spammy/harmless notifications if you want
+    if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) return;
+
+    std::ostringstream ss;
+    ss << message << "\n";
+
+    /*if (type == GL_DEBUG_TYPE_ERROR) {
+      Window::logger->error(ss.str());
+    } else {
+      Window::logger->warn(ss.str());
+    }*/
+  }
+
   Window::Window(float width, float height, std::string name, std::string mapName)
     : fbWidth(width), fbHeight(height) {
     window = glfwCreateWindow(width, height, name.c_str(), NULL, NULL);
@@ -23,13 +38,17 @@ namespace Aleg {
       return;
     }
 
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window); 
     glfwSwapInterval(0);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
       std::cerr << "Failed to initialize GLAD" << std::endl;
       return;
     }
+
+    glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glDebugMessageCallback(glDebugCallback, nullptr);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -110,7 +129,19 @@ namespace Aleg {
     windows[mapName] = this;
   }
 
+  Window::~Window() {
+    if (sceneTexture) glDeleteTextures(1, &sceneTexture);
+    if (sceneFBO) glDeleteFramebuffers(1, &sceneFBO);
+    if (pingpongTexture[0]) glDeleteTextures(2, pingpongTexture);
+    if (pingpongFBO[0]) glDeleteFramebuffers(2, pingpongFBO);
+
+    glfwDestroyWindow(window);
+  }
+
   void Window::makeSceneTexture() {
+    if (sceneTexture) glDeleteTextures(1, &sceneTexture);
+    if (sceneFBO) glDeleteFramebuffers(1, &sceneFBO);
+
     glGenTextures(1, &sceneTexture);
     glBindTexture(GL_TEXTURE_2D, sceneTexture);
 
@@ -154,6 +185,9 @@ namespace Aleg {
   }
 
   void Window::makePingpongBuffers() {
+    if (pingpongTexture[0]) glDeleteTextures(2, pingpongTexture);
+    if (pingpongFBO[0]) glDeleteFramebuffers(2, pingpongFBO);
+
     glGenFramebuffers(2, pingpongFBO);
     glGenTextures(2, pingpongTexture);
 
@@ -191,7 +225,19 @@ namespace Aleg {
   // Main functions
 
   int Window::init() {
+    glfwSetErrorCallback([](int error, const char* desc) {
+      std::ostringstream ss;
+      ss << "glfw error with error code : " << error << " and description " << desc << "\n";
+
+      logger->error(ss.str());
+    });
+
     if (!glfwInit()) return -1;
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+    //glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE); // also request a debug context explicitly
 
     currentWindow = new Window(600, 400, "Game", "main");
 
@@ -210,7 +256,7 @@ namespace Aleg {
         if (!window->shouldUpdate || glfwWindowShouldClose(window->window)) {
           glfwMakeContextCurrent(window->window);
           window->parent->recursivelyDeleteChildren();
-          glfwDestroyWindow(window->window);
+          delete window->parent;
           it = windows.erase(it); // erase returns the next valid iterator — use it directly
           delete window;
           continue;
@@ -233,14 +279,6 @@ namespace Aleg {
 
     recreateOlderShaders();
     glfwPollEvents();
-    GLenum err = glGetError();
-    if (err != GL_NO_ERROR) {
-      std::ostringstream ss;
-      ss << "GL error after glfwPollEvents: " << err;
-
-      logger->error(ss.str());
-      return;
-    }
 
     double currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;

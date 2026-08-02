@@ -18,6 +18,7 @@ namespace Aleg {
   class Window {
   public:
     Window(float width, float height, std::string name, std::string mapName);
+    ~Window();
 
     GLFWwindow* window;
     ParentObject* parent = nullptr;

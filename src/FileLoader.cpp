@@ -16,7 +16,9 @@ namespace Aleg {
     return buffer.str();
   }
 
-  unsigned int FileLoader::loadTexture(const std::string path) {
+  unsigned int FileLoader::loadTexture(const std::string path, Window* window) {
+    if (window) glfwMakeContextCurrent(window->window);
+
     unsigned int textureID;
     glGenTextures(1, &textureID);
 

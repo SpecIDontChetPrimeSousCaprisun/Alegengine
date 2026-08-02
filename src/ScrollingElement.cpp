@@ -9,16 +9,30 @@ namespace Aleg {
 
   void ScrollingElement::initObject() {
     Window::scrollCallbacks.push_back([this](Window* win, double x, double y) {scrollCallback(win, x, y);});
+
+    horizontalScrollbar = new UIElement(glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), 0.0f, glm::vec3(0.75f, 0.75f, 0.75f), 10000.0f);
+    verticalScrollbar = new UIElement(glm::vec2(0.9f, 0.1f), glm::vec2(0.05f, 0.8f), 0.0f, glm::vec3(0.75f, 0.75f, 0.75f), 10000.0f);
+  
+    horizontalScrollbar->setParent(this);
+    verticalScrollbar->setParent(this);
   }
 
   void ScrollingElement::beforeUpdate() {
     if (layout == "List") listLayout();
   }
 
+  void ScrollingElement::afterUpdate() {
+    horizontalScrollbar->visible = horizontalScrolling;
+    verticalScrollbar->visible = verticalScrolling;
+  }
+
   void ScrollingElement::listLayout() {
     float y = 0.0f;
 
     for (Object* object : getChildren()) {
+      if (object == verticalScrollbar || object == horizontalScrollbar) continue;
+      if (!object->visible) continue;
+
       object->position = glm::vec2(inset, y + inset) + scrollAmount;
       object->setMask(realPosition, realSize);
       object->size.x = realSize.x - (inset * 2);

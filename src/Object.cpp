@@ -16,7 +16,7 @@ namespace Aleg {
   }
 
   Object::Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex, Window* window) 
-    : position(position), size(size), zIndex(zIndex), transparency(transparency), usesColor(false), window(window), texture(FileLoader::loadTexture(texPath)) {
+    : position(position), size(size), zIndex(zIndex), transparency(transparency), usesColor(false), window(window), texture(FileLoader::loadTexture(texPath, window)) {
     initObject();
   }
 
@@ -185,12 +185,7 @@ namespace Aleg {
     glUniform1i(
       glGetUniformLocation(shader->program, "useColor"),
       usesColor ? 1 : 0
-    );
-
-    glUniform3f(
-      glGetUniformLocation(shader->program, "color"),
-      color.x, color.y, color.z
-    );
+    ); 
 
     glUniform3f(
       glGetUniformLocation(shader->program, "colorChange"),
@@ -228,14 +223,20 @@ namespace Aleg {
       window->fbWidth, window->fbHeight
     );
 
-    // Send texture
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    if (usesColor) { // Send color / texture
+      glUniform3f(
+        glGetUniformLocation(shader->program, "color"),
+        color.x, color.y, color.z
+      );
+    } else {
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, texture);
 
-    glUniform1i(
-      glGetUniformLocation(shader->program, "tex"),
-      0
-    );
+      glUniform1i(
+        glGetUniformLocation(shader->program, "tex"),
+        0
+      );
+    }
   }
 
   // update
@@ -376,13 +377,13 @@ namespace Aleg {
   }
 
   Object::~Object() {
-    removeParent();
-    glDeleteVertexArrays(1, &VAO);
+    removeParent(); 
+    /*glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
     if (!usesColor) {
       glDeleteTextures(1, &texture);
-    }
+    }*/
   }
 
   void Object::pendDelete() {
