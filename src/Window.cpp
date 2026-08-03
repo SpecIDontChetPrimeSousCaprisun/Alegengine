@@ -130,6 +130,11 @@ namespace Aleg {
   }
 
   Window::~Window() {
+    glfwMakeContextCurrent(window);
+
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+
     if (sceneTexture) glDeleteTextures(1, &sceneTexture);
     if (sceneFBO) glDeleteFramebuffers(1, &sceneFBO);
     if (pingpongTexture[0]) glDeleteTextures(2, pingpongTexture);
@@ -257,6 +262,7 @@ namespace Aleg {
           glfwMakeContextCurrent(window->window);
           window->parent->recursivelyDeleteChildren();
           window->parent->pendDelete();
+          window->cam->pendDelete();
           Object::deletePendingObjects();
           it = windows.erase(it); // erase returns the next valid iterator — use it directly
           delete window;

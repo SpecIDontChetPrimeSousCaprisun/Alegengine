@@ -378,6 +378,7 @@ namespace Aleg {
 
   Object::~Object() {
     removeParent(); 
+    glfwMakeContextCurrent(window->window);
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
