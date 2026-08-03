@@ -256,7 +256,8 @@ namespace Aleg {
         if (!window->shouldUpdate || glfwWindowShouldClose(window->window)) {
           glfwMakeContextCurrent(window->window);
           window->parent->recursivelyDeleteChildren();
-          delete window->parent;
+          window->parent->pendDelete();
+          Object::deletePendingObjects();
           it = windows.erase(it); // erase returns the next valid iterator — use it directly
           delete window;
           continue;

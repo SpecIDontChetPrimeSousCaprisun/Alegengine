@@ -378,12 +378,12 @@ namespace Aleg {
 
   Object::~Object() {
     removeParent(); 
-    /*glDeleteVertexArrays(1, &VAO);
+    glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
     if (!usesColor) {
       glDeleteTextures(1, &texture);
-    }*/
+    }
   }
 
   void Object::pendDelete() {
