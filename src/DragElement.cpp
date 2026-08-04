@@ -2,11 +2,11 @@
 #include <algorithm>
 
 namespace Aleg {
-  DragElement::DragElement(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex) 
-    : UIElement(position, size, transparency, color, zIndex) {}
+  DragElement::DragElement(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window) 
+    : UIElement(position, size, transparency, color, zIndex, window) {}
 
-  DragElement::DragElement(glm::vec2 position, glm::vec2 size, float transparency, const unsigned char* tex, unsigned int len, float zIndex) 
-    : UIElement(position, size, transparency, tex, len, zIndex) {}
+  DragElement::DragElement(glm::vec2 position, glm::vec2 size, float transparency, const unsigned char* tex, unsigned int len, float zIndex, Window* window) 
+    : UIElement(position, size, transparency, tex, len, zIndex, window) {}
 
   void DragElement::beforeUpdate() {
     recalculateFocus();

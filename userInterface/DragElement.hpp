@@ -5,8 +5,8 @@
 namespace Aleg {
   class DragElement : public UIElement {
   public:
-    DragElement(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex);
-    DragElement(glm::vec2 position, glm::vec2 size, float transparency, const unsigned char* tex, unsigned int len, float zIndex);
+    DragElement(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window = nullptr);
+    DragElement(glm::vec2 position, glm::vec2 size, float transparency, const unsigned char* tex, unsigned int len, float zIndex, Window* window = nullptr);
 
     bool followX = true;
     bool followY = true;
