@@ -5,8 +5,8 @@
 namespace Aleg {
   class UIElement : public Object {
   public:
-    UIElement(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex);
-    UIElement(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex);
+    UIElement(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window = nullptr);
+    UIElement(glm::vec2 position, glm::vec2 size, float transparency, const unsigned char* tex, unsigned int len, float zIndex, Window* window = nullptr);
 
     bool getFocus();
   protected:

@@ -11,16 +11,21 @@ namespace Aleg {
                 float transparency,
                 glm::vec3 color,
                 float zIndex,
-                std::string fontPath,
-                std::string text);
+                const unsigned char* font,
+                unsigned int fontLen,
+                std::string text,
+                Window* window = nullptr);
 
     TextElement(glm::vec2 position,
                 glm::vec2 size,
                 float transparency,
-                std::string texPath,
+                const unsigned char* tex,
+                unsigned int len,
                 float zIndex,
-                std::string fontPath,
-                std::string text);
+                const unsigned char* font,
+                unsigned int fontLen,
+                std::string text,
+                Window* window = nullptr);
 
     static void init();
 
@@ -41,13 +46,14 @@ namespace Aleg {
     //DrawInfo* beforeDrawing() override;
     void afterDrawing(DrawInfo* info) override;
   private:
-    static Shader* shader;
     static std::vector<TextElement*> elements;
 
     void initObject();
 
     unsigned int VAO, VBO;
-    std::string fontPath;
+    const unsigned char* rawFont;
+    unsigned int fontLen;
     Font* font = nullptr;
+    Shader* shader = nullptr;
   };
 }

@@ -16,18 +16,18 @@ namespace Aleg {
     return buffer.str();
   }
 
-  unsigned int FileLoader::loadTexture(const std::string path, Window* window) {
+  unsigned int FileLoader::loadTexture(const unsigned char* tex, unsigned int len, Window* window) {
     if (window) glfwMakeContextCurrent(window->window);
 
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
     int width, height, nrChannels;
-    unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+    unsigned char* data = stbi_load_from_memory(tex, len, &width, &height, &nrChannels, 0);
 
     if (!data) {
       std::ostringstream ss;
-      ss << "Failed to load texture: " << path;
+      ss << "Failed to load texture !";
       logger->error(ss.str());
 
       return 0;

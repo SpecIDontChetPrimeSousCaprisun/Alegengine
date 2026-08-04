@@ -13,19 +13,19 @@ namespace Aleg {
   std::vector<std::function<void(Window*, double, double)>> Window::scrollCallbacks;
   std::vector<ShaderInfo*> Window::shaderInfos;
 
-  void GLAPIENTRY glDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
-                                  GLsizei length, const GLchar* message, const void* userParam) {
+  void GLAPIENTRY glDebugCallback(GLenum, GLenum type, GLuint, GLenum severity,
+                                  GLsizei, const GLchar* message, const void*) {
     // Filter out spammy/harmless notifications if you want
     if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) return;
 
     std::ostringstream ss;
     ss << message << "\n";
 
-    /*if (type == GL_DEBUG_TYPE_ERROR) {
+    if (type == GL_DEBUG_TYPE_ERROR) {
       Window::logger->error(ss.str());
     } else {
       Window::logger->warn(ss.str());
-    }*/
+    }
   }
 
   Window::Window(float width, float height, std::string name, std::string mapName)
@@ -223,7 +223,7 @@ namespace Aleg {
     for (ShaderInfo* info : shaderInfos) {
       if (shaders[info->name]) continue; 
 
-      shaders[info->name] = new Shader(info->vertexPath, info->fragPath);
+      shaders[info->name] = new Shader(info->vertexSrc, info->fragSrc);
     }
   }
 

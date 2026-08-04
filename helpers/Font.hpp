@@ -9,6 +9,7 @@ namespace Aleg {
   class Font {
   public:
     Font(std::string path, float pixelHeight);
+    Font(const unsigned char* data, unsigned int len, float pixelHeight);
 
     ~Font();
 
@@ -22,6 +23,8 @@ namespace Aleg {
     stbtt_bakedchar cdata[96];
   private:
     static Logger* logger;
+
+    void bakeFont(float pixelHeight);
 
     std::vector<unsigned char> ttfBuffer;
   };

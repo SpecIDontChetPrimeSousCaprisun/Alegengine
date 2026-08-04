@@ -5,8 +5,8 @@ namespace Aleg {
   DragElement::DragElement(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex) 
     : UIElement(position, size, transparency, color, zIndex) {}
 
-  DragElement::DragElement(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex) 
-    : UIElement(position, size, transparency, texPath, zIndex) {}
+  DragElement::DragElement(glm::vec2 position, glm::vec2 size, float transparency, const unsigned char* tex, unsigned int len, float zIndex) 
+    : UIElement(position, size, transparency, tex, len, zIndex) {}
 
   void DragElement::beforeUpdate() {
     recalculateFocus();

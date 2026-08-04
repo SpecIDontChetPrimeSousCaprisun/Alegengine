@@ -39,7 +39,7 @@ namespace Aleg {
                                                   CollisionGroup mask = CollisionGroups::Default);
 
     Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window = nullptr); 
-    Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex, Window* window = nullptr);
+    Object(glm::vec2 position, glm::vec2 size, float transparency, const unsigned char* tex, unsigned int len, float zIndex, Window* window = nullptr);
 
     void draw();
     void update();

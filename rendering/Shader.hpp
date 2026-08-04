@@ -9,16 +9,17 @@
 namespace Aleg {
   class ShaderInfo {
   public:
-    ShaderInfo(std::string name, std::string vertexPath, std::string fragPath);
+    ShaderInfo(std::string name, const char* vertexSrc, const char* fragSrc);
 
     std::string name;
-    std::string vertexPath;
-    std::string fragPath;
+    const char* vertexSrc; 
+    const char* fragSrc;
   };
 
   class Shader {
   public:
     Shader(std::string vertexPath, std::string fragPath);
+    Shader(const char* vertexSrc, const char* fragSrc);
 
     unsigned int program;
   private:

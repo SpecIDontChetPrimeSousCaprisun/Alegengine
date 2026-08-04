@@ -11,7 +11,7 @@ namespace Aleg {
   class FileLoader {
   public:
     static std::string loadFile(std::string path);
-    static unsigned int loadTexture(std::string path, Window* window);
+    static unsigned int loadTexture(const unsigned char* tex, unsigned int len, Window* window);
     static std::vector<unsigned char> loadFontFile(const std::string& path);
   private:
     static Logger* logger;

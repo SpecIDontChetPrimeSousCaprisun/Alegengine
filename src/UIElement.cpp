@@ -1,13 +1,13 @@
 #include <Alegengine/alegengine.hpp>
 
 namespace Aleg {
-  UIElement::UIElement(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex) 
-    : Object(position, size, transparency, color, zIndex + 999) {
+  UIElement::UIElement(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window) 
+    : Object(position, size, transparency, color, zIndex + 999, window) {
     initObject();
   }
 
-  UIElement::UIElement(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex) 
-    : Object(position, size, transparency, texPath, zIndex + 999) {
+  UIElement::UIElement(glm::vec2 position, glm::vec2 size, float transparency, const unsigned char* tex, unsigned int len, float zIndex, Window* window) 
+    : Object(position, size, transparency, tex, len, zIndex + 999, window) {
     initObject();
   }
 
@@ -35,6 +35,10 @@ namespace Aleg {
   
   void UIElement::afterUpdate() {
     if (!getParent()) return;
+
+    ParentObject* parent = dynamic_cast<ParentObject*>(getParent());
+
+    if (parent) return;
 
     glm::vec2 realAnchorPoint = glm::vec2(anchorPoint.x, -anchorPoint.y);
 

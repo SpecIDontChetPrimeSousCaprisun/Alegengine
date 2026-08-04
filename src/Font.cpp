@@ -6,7 +6,15 @@ namespace Aleg {
 
   Font::Font(std::string path, float pixelHeight) {
     ttfBuffer = FileLoader::loadFontFile(path); 
+    bakeFont(pixelHeight);
+  }
 
+  Font::Font(const unsigned char* data, unsigned int len, float pixelHeight) {
+    ttfBuffer.assign(data, data + len);
+    bakeFont(pixelHeight);
+  }
+
+  void Font::bakeFont(float pixelHeight) {
     BITMAP_W = std::max(512, (int)pixelHeight * 16);
     BITMAP_H = std::max(512, (int)pixelHeight * 16);
 

@@ -8,6 +8,11 @@ namespace Aleg {
     effects[mapName] = this;
   }
 
+  ScreenEffect::ScreenEffect(const char* vertexSrc, const char* fragSrc, std::string mapName) 
+    : shader(new Shader(vertexSrc, fragSrc)) {
+    effects[mapName] = this;
+  }
+
   void ScreenEffect::passShaderInfo() {
     glUniform1i(
       glGetUniformLocation(shader->program, "scene"),

@@ -12,16 +12,21 @@ namespace Aleg {
            float transparency,
            glm::vec3 color,
            float zIndex,
-           std::string fontPath,
-           std::string text);
+           const unsigned char* font,
+           unsigned int fontLen,
+           std::string text,
+           Window* window = nullptr);
 
     Button(glm::vec2 position,
            glm::vec2 size,
            float transparency,
-           std::string texPath,
+           const unsigned char* tex,
+           unsigned int len,
            float zIndex,
-           std::string fontPath,
-           std::string text);
+           const unsigned char* font,
+           unsigned int fontLen,
+           std::string text,
+           Window* window = nullptr);
 
     std::function<void()> callback;
     bool retriggerOnEchoes = false;

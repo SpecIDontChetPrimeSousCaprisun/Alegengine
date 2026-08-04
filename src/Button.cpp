@@ -8,18 +8,23 @@ namespace Aleg {
                  float transparency,
                  glm::vec3 color,
                  float zIndex,
-                 std::string fontPath,
-                 std::string text)
-    : TextElement(position, size, transparency, color, zIndex, fontPath, text) {initObject();}
+                 const unsigned char* font,
+                 unsigned int fontLen,
+                 std::string text,
+                 Window* window)
+    : TextElement(position, size, transparency, color, zIndex, font, fontLen, text, window) {initObject();}
 
   Button::Button(glm::vec2 position,
                  glm::vec2 size,
                  float transparency,
-                 std::string texPath,
+                 const unsigned char* tex,
+                 unsigned int len,
                  float zIndex,
-                 std::string fontPath,
-                 std::string text)
-    : TextElement(position, size, transparency, texPath, zIndex, fontPath, text) {initObject();}
+                 const unsigned char* font,
+                 unsigned int fontLen,
+                 std::string text,
+                 Window* window)
+    : TextElement(position, size, transparency, tex, len, zIndex, font, fontLen, text, window) {initObject();}
 
   void Button::initObject() {
     callback = []() {

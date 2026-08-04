@@ -7,8 +7,8 @@
 namespace Aleg {
   Logger* Shader::logger = new Logger("Shader");
 
-  ShaderInfo::ShaderInfo(std::string name, std::string vertexPath, std::string fragPath) 
-    : name(name), vertexPath(vertexPath), fragPath(fragPath) {}
+  ShaderInfo::ShaderInfo(std::string name, const char* vertexSrc, const char* fragSrc)
+    : name(name), vertexSrc(vertexSrc), fragSrc(fragSrc) {}
 
   Shader::Shader(std::string vertexPath, std::string fragPath) {
     std::string vertexCode = FileLoader::loadFile(vertexPath);
@@ -19,6 +19,45 @@ namespace Aleg {
 
     unsigned int vertexShader = getShaderFromSource(vertexSource, GL_VERTEX_SHADER);
     unsigned int fragShader = getShaderFromSource(fragSource, GL_FRAGMENT_SHADER);
+
+    int success;
+    char infoLog[512];
+    program = glCreateProgram();
+
+    glAttachShader(program, vertexShader);
+    glAttachShader(program, fragShader);
+
+    glLinkProgram(program);
+
+    glGetProgramiv(
+        program,
+        GL_LINK_STATUS,
+        &success
+    );
+
+    if (!success) {
+      glGetProgramInfoLog(
+        program,
+        512,
+        NULL,
+        infoLog
+      );
+
+      std::ostringstream ss;
+      ss << "PROGRAM LINK ERROR:\n" << infoLog;
+
+      logger->error(ss.str());
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragShader);
+
+    logger->log("Shader initialised");
+  }
+
+  Shader::Shader(const char* vertexSrc, const char* fragSrc) {
+    unsigned int vertexShader = getShaderFromSource(vertexSrc, GL_VERTEX_SHADER);
+    unsigned int fragShader = getShaderFromSource(fragSrc, GL_FRAGMENT_SHADER);
 
     int success;
     char infoLog[512];

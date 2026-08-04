@@ -1,13 +1,15 @@
 #include <Alegengine/alegengine.hpp>
 #include <cmath>
 #include <sstream>
+#include <shaders/Vertex.h>
+#include <shaders/Frag.h>
 
 namespace Aleg {
   std::map<float, std::vector<Object*>> Object::objects;
   Logger* Object::logger = new Logger("Object");
 
   void Object::init() {
-    Window::shaderInfos.push_back(new ShaderInfo("objShader", "shaders/Vertex.glsl", "shaders/Frag.glsl"));
+    Window::shaderInfos.push_back(new ShaderInfo("objShader", (const char*)Vertex_glsl, (const char*) Frag_glsl));
   }
 
   Object::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window) 
@@ -15,8 +17,8 @@ namespace Aleg {
     initObject();
   }
 
-  Object::Object(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex, Window* window) 
-    : position(position), size(size), zIndex(zIndex), transparency(transparency), usesColor(false), window(window), texture(FileLoader::loadTexture(texPath, window)) {
+  Object::Object(glm::vec2 position, glm::vec2 size, float transparency, const unsigned char* tex, unsigned int len, float zIndex, Window* window) 
+    : position(position), size(size), zIndex(zIndex), transparency(transparency), usesColor(false), window(window), texture(FileLoader::loadTexture(tex, len, window)) {
     initObject();
   }
 

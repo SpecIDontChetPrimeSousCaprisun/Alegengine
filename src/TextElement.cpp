@@ -1,11 +1,12 @@
 #include <Alegengine/alegengine.hpp>
+#include <shaders/TextVertex.h>
+#include <shaders/TextFrag.h>
 
 namespace Aleg {
-  Shader* TextElement::shader;
   std::vector<TextElement*> TextElement::elements;
 
   void TextElement::init() {
-    shader = new Shader("shaders/TextVertex.glsl", "shaders/TextFrag.glsl");
+    Window::shaderInfos.push_back(new ShaderInfo("textShader", (const char*)TextVertex_glsl, (const char*)TextFrag_glsl));
   }
 
   TextElement::TextElement(glm::vec2 position,
@@ -13,26 +14,32 @@ namespace Aleg {
                            float transparency,
                            glm::vec3 color,
                            float zIndex,
-                           std::string fontPath,
-                           std::string text)
-    : UIElement(position, size, transparency, color, zIndex), 
-      text(text), fontPath(fontPath) {
+                           const unsigned char* font,
+                           unsigned int fontLen,
+                           std::string text,
+                           Window* window)
+    : UIElement(position, size, transparency, color, zIndex, window), 
+      text(text), rawFont(font), fontLen(fontLen) {
     initObject();
   }
 
   TextElement::TextElement(glm::vec2 position,
                            glm::vec2 size,
                            float transparency,
-                           std::string texPath,
+                           const unsigned char* tex,
+                           unsigned int len,
                            float zIndex,
-                           std::string fontPath,
-                           std::string text)
-    : UIElement(position, size, transparency, texPath, zIndex), 
-      text(text), fontPath(fontPath) {
+                           const unsigned char* font,
+                           unsigned int fontLen,
+                           std::string text,
+                           Window* window)
+    : UIElement(position, size, transparency, tex, len, zIndex, window), 
+      text(text), rawFont(font), fontLen(fontLen) {
     initObject();
   }
 
   void TextElement::initObject() {
+    shader = window->shaders["textShader"];
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 
@@ -61,6 +68,7 @@ namespace Aleg {
   }
 
   void TextElement::afterDrawing(DrawInfo* info) {
+    if (!shader) shader = window->shaders["textShader"];
     glUseProgram(shader->program);
 
     glm::mat4 projection = glm::ortho(
@@ -234,12 +242,12 @@ namespace Aleg {
 
     float fontHeight = info->size.y;
 
-    font = new Font(fontPath, fontHeight);
+    font = new Font(rawFont, fontLen, fontHeight);
     recalculateTextWidth();
 
     if (textWidth > info->size.x) {
       delete font; 
-      font = new Font(fontPath, (fontHeight * info->size.x) / textWidth);
+      font = new Font(rawFont, fontLen, (fontHeight * info->size.x) / textWidth);
     }
   }
 }

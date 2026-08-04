@@ -6,8 +6,8 @@ namespace Aleg {
   ScrollingElement::ScrollingElement(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex)
     : UIElement(position, size, transparency, color, zIndex) {initObject();}
 
-  ScrollingElement::ScrollingElement(glm::vec2 position, glm::vec2 size, float transparency, std::string texPath, float zIndex)
-    : UIElement(position, size, transparency, texPath, zIndex) {initObject();}
+  ScrollingElement::ScrollingElement(glm::vec2 position, glm::vec2 size, float transparency, const unsigned char* tex, unsigned int len, float zIndex)
+    : UIElement(position, size, transparency, tex, len, zIndex) {initObject();}
 
   void ScrollingElement::initObject() {
     Window::scrollCallbacks.push_back([this](Window* win, double x, double y) {scrollCallback(win, x, y);});
@@ -78,7 +78,6 @@ namespace Aleg {
         scrollAmount.y += (y / window->fbHeight) * sens;
         float expectedScrollPos = ((realSize.y - (inset * 2)) * (-scrollAmount.y / lastY)) + (verticalScrollbar->size.y / 2) + inset;
         
-        std::cout << expectedScrollPos << "\n";
         verticalScrollbar->position.y = std::clamp(expectedScrollPos, inset, 1.0f - inset);
       } else if (horizontalScrolling) {
         scrollAmount.x += (y / window->fbHeight) * sens;
