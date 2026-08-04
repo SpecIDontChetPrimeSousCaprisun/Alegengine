@@ -12,7 +12,8 @@ namespace Aleg {
   protected:
     void recalculateFocus();
     virtual void beforeUpdate() override;
-    
+    virtual void afterUpdate() override;
+
     DrawInfo* beforeDrawing() override;
 
     bool focused = false;

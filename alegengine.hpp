@@ -16,6 +16,7 @@
 #include "userInterface/TextElement.hpp"
 #include "userInterface/Button.hpp"
 #include "userInterface/ScrollingElement.hpp"
+#include "userInterface/DragElement.hpp"
 
 #include "helpers/FileLoader.hpp"
 #include "helpers/Logger.hpp"

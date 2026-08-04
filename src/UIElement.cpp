@@ -32,6 +32,15 @@ namespace Aleg {
   void UIElement::beforeUpdate() {
     recalculateFocus();
   }
+  
+  void UIElement::afterUpdate() {
+    if (!getParent()) return;
+
+    glm::vec2 realAnchorPoint = glm::vec2(anchorPoint.x, -anchorPoint.y);
+
+    realSize = getParent()->realSize * realSize;
+    realPosition = (getParent()->realPosition + (getParent()->realSize * position)) + (realSize * realAnchorPoint);
+  }
 
   // Focus
   bool UIElement::getFocus() {

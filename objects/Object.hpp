@@ -53,10 +53,11 @@ namespace Aleg {
     MaskResult* getMask();
 
     glm::vec2 position;
-    glm::vec2 realPosition;
+    glm::vec2 realPosition = glm::vec2(0.0f, 0.0f);
     glm::vec2 size;
-    glm::vec2 realSize;
+    glm::vec2 realSize = glm::vec2(0.0f, 0.0f);
     glm::vec2 linearVelocity = glm::vec2(0.0f, 0.0f);
+    glm::vec2 anchorPoint = glm::vec2(0.0f, 0.0f);
 
     float zIndex;
     float transparency;

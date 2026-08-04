@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Alegengine/userInterface/UIElement.hpp>
+#include <Alegengine/userInterface/DragElement.hpp>
 #include <Alegengine/rendering/Window.hpp>
 #include <string>
 
@@ -12,7 +13,7 @@ namespace Aleg {
 
     bool horizontalScrolling = false;
     bool verticalScrolling = true;
-    float inset = 0.01f;
+    float inset = 0.05f;
     float sens = 25.0f;
     std::string layout = "List"; // Options are : List, Grid and None (see docs for more)
   protected:
@@ -24,7 +25,8 @@ namespace Aleg {
     void scrollCallback(Window* win, double x, double y);
 
     glm::vec2 scrollAmount = glm::vec2(0.0f, 0.0f);
-    UIElement* horizontalScrollbar;
-    UIElement* verticalScrollbar;
+    float lastY = 0.0f;
+    DragElement* horizontalScrollbar;
+    DragElement* verticalScrollbar;
   };
 }

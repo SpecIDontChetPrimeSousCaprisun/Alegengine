@@ -244,23 +244,31 @@ namespace Aleg {
   void Object::afterUpdate() {}
 
   void Object::update() {
-    if (parent) realPosition = parent->realPosition + position;
-    else realPosition = position;
-
     beforeUpdate();
+
+    glm::vec2 realAnchorPoint = glm::vec2(anchorPoint.x, -anchorPoint.y);
+
+    if (parent) realPosition = (parent->realPosition + position) + (size * realAnchorPoint);
+    else realPosition = position + (size * realAnchorPoint);
 
     realSize = size;
 
-    if (anchored) return;
+    if (anchored) {
+      afterUpdate();
+      return;
+    }
 
     if (type == "side") linearVelocity += glm::vec2(0.0f, gravity) * (float)window->deltaTime;
     position += linearVelocity * (float)window->deltaTime;
     rotation += angularVelocity * (float)window->deltaTime;
 
-    if (parent) realPosition = parent->realPosition + position;
-    else realPosition = position;
+    if (parent) realPosition = (parent->realPosition + position) + (size * realAnchorPoint);
+    else realPosition = position + (size * realAnchorPoint);
 
-    if (!canCollide) return;
+    if (!canCollide) {
+      afterUpdate();
+      return;
+    }
 
     for (auto& [zIndex, objectVector] : objects) {
       for (Object* object : objectVector) {
@@ -279,8 +287,8 @@ namespace Aleg {
       }
     }
 
-    if (parent) position = realPosition - parent->realPosition;
-    else position = realPosition;
+    if (parent) position = (realPosition - parent->realPosition) + (size * realAnchorPoint);
+    else position = realPosition + (size * realAnchorPoint);
 
     afterUpdate();
   }
