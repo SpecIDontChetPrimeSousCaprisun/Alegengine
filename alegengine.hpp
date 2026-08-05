@@ -11,6 +11,7 @@
 #include "objects/MaskResult.hpp"
 #include "objects/CollisionGroup.hpp"
 #include "objects/Player.hpp"
+#include "objects/Particle.hpp"
 
 #include "userInterface/UIElement.hpp"
 #include "userInterface/TextElement.hpp"
@@ -24,9 +25,11 @@
 #include "helpers/Tween.hpp"
 
 #include <string>
+#include <random>
 
 namespace Aleg {
   extern std::string type;
+  extern std::mt19937 rng;
 
   void init(std::string type = "topdown"); // Types can be : topdown and side
   void mainLoop();

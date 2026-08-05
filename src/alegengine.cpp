@@ -13,6 +13,7 @@ void enableAnsiOnWindows() {
 
 namespace Aleg {
   std::string type;
+  std::mt19937 rng(std::random_device{}());
 
   void init(std::string type) {
     #ifdef _WIN32

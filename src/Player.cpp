@@ -34,6 +34,16 @@ namespace Aleg {
       linearVelocity.y -= 500.0f;
       state = "jumping";
       lastJump = 0.1f;
+      Particle::spawnParticles(realPosition + glm::vec2(realSize.x / 2.0f, realSize.y), 
+                               glm::vec2(50.0f, 50.0f),
+                               0.0f,
+                               glm::vec3(1.0f, 0.0f, 0.0f),
+                               0.0f,
+                               glm::vec2(0.0f, -500.0f),
+                               100.0f,
+                               2.0f,
+                               50.0f,
+                               window);
     }
 
     std::vector<Object*> result = Object::getObjectsInBounds(realPosition + glm::vec2(0.0f, realSize.y),

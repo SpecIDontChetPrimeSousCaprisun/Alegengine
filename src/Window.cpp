@@ -255,6 +255,7 @@ namespace Aleg {
 
       Object::deletePendingObjects();
       TweenBase::updateAll();
+      Particle::update();
 
       for (auto it = windows.begin(); it != windows.end(); ) {
         Window* window = it->second;
