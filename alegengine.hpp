@@ -21,6 +21,7 @@
 #include "helpers/FileLoader.hpp"
 #include "helpers/Logger.hpp"
 #include "helpers/Font.hpp"
+#include "helpers/Tween.hpp"
 
 #include <string>
 
