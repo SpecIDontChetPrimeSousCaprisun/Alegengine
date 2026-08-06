@@ -85,7 +85,7 @@ namespace Aleg {
   DrawInfo* Object::beforeDrawing() {
     DrawInfo* info = new DrawInfo(realPosition, realSize); 
 
-    if (window->cam) info->position -= window->cam->realPosition;
+    if (window->cam) info->position -= (window->cam->realPosition / parallaxFactor);
     if (hasMask) {
       info->hasMask = true;
       info->maskPosition = maskPosition;
