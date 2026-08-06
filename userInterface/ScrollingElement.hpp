@@ -15,6 +15,7 @@ namespace Aleg {
     bool verticalScrolling = true;
     float inset = 0.05f;
     float sens = 25.0f;
+    glm::vec2 gridSize = glm::vec2(0.25f, 0.25f);
     std::string layout = "List"; // Options are : List, Grid and None (see docs for more)
   protected:
     void beforeUpdate() override;
@@ -22,6 +23,9 @@ namespace Aleg {
   private:
     void initObject();
     void listLayout();
+    void gridLayout();
+    void noLayout();
+    void recalculateScrollbars(float y);
     void scrollCallback(Window* win, double x, double y);
 
     glm::vec2 scrollAmount = glm::vec2(0.0f, 0.0f);

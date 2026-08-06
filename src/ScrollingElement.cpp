@@ -31,7 +31,11 @@ namespace Aleg {
     horizontalScrollbar->visible = horizontalScrolling;
     verticalScrollbar->visible = verticalScrolling;
 
+    for (Object* object : getChildren()) object->visible = visible;
+
     if (layout == "List") listLayout();
+    else if (layout == "Grid") gridLayout();
+    else noLayout();
   }
 
   void ScrollingElement::afterUpdate() {}
@@ -54,6 +58,45 @@ namespace Aleg {
       y += object->realSize.y;
     }
 
+    recalculateScrollbars(y);
+  }
+
+  void ScrollingElement::gridLayout() {
+    float x = 0.0f;
+    float y = 0.0f;
+
+    for (Object* object : getChildren()) {
+      if (!object->visible) continue;
+      if (object == verticalScrollbar || object == horizontalScrollbar) {
+        glm::vec2 sizeMask = glm::vec2(realSize.x - (realSize.x * inset), realSize.y - (realSize.y * (inset * 2)));
+
+        object->setMask(realPosition + (realSize * inset), sizeMask);
+        continue;
+      }
+
+      object->setMask(realPosition, realSize);
+      object->position = (glm::vec2(x, y) + inset) + scrollAmount;
+      object->size = gridSize;
+      x += gridSize.x + inset;
+
+      if (x >= 1.0f) {
+        y += gridSize.y + inset;
+        x = 0.0f;
+      }
+    }
+
+    recalculateScrollbars(y);
+  }
+
+  void ScrollingElement::noLayout() {
+    for (Object* object : getChildren()) {
+      if (!object->visible) continue;
+
+      object->setMask(realPosition, realSize);
+    }
+  }
+
+  void ScrollingElement::recalculateScrollbars(float y) {
     verticalScrollbar->visible = y > realSize.y - (inset * 2) && verticalScrolling;
     verticalScrollbar->size.y = 1 / (y / realSize.y - (inset * 2));
 
