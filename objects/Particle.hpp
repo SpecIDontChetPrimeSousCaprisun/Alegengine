@@ -31,12 +31,12 @@ namespace Aleg {
     glm::vec2 size;
     float transparency;
     glm::vec3 color;
+    const unsigned char* tex;
+    unsigned int len;
     float zIndex;
     glm::vec2 dir;
     float spread;
-    float lifetime;
-    const unsigned char* tex;
-    unsigned int len;
+    float lifetime; 
     Window* window;
     bool useColor;
   };
@@ -67,6 +67,7 @@ namespace Aleg {
     static int amntOfParticlesPerFrame;
 
     static void update();
+    static void removeQueuedParticlesWithWindow(Window* window);
 
     static void spawnParticles(glm::vec2 position,
                                glm::vec2 size,

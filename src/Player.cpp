@@ -44,7 +44,7 @@ namespace Aleg {
                                glm::vec2(0.0f, -500.0f),
                                100.0f,
                                2.0f,
-                               50.0f,
+                               5000.0f,
                                window);
     }
 

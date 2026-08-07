@@ -272,6 +272,7 @@ namespace Aleg {
           window->parent->recursivelyDeleteChildren();
           window->parent->pendDelete();
           window->cam->pendDelete();
+          Particle::removeQueuedParticlesWithWindow(window);
           Object::deletePendingObjects();
           it = windows.erase(it); // erase returns the next valid iterator — use it directly
           delete window;

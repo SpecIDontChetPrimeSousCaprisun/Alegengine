@@ -3,7 +3,7 @@
 #include <Alegengine/rng.hpp>
 
 namespace Aleg {
-  int Particle::amntOfParticlesPerFrame = 5;
+  int Particle::amntOfParticlesPerFrame = 3;
   std::vector<ParticleInfo*> Particle::particleQueue;
 
   Particle::Particle(glm::vec2 position,
@@ -73,8 +73,8 @@ namespace Aleg {
       size(size), 
       transparency(transparency),
       tex(tex), 
-      zIndex(zIndex),
       len(len),
+      zIndex(zIndex),
       dir(dir),
       spread(spread),
       lifetime(lifetime),
@@ -168,7 +168,45 @@ namespace Aleg {
                     particleQueue[0]->window);
       }
 
+      ParticleInfo* info = particleQueue[0];
+
       particleQueue.erase(particleQueue.begin());
+
+      bool shouldDelete = true;
+
+      for (ParticleInfo* loopedInfo : particleQueue) {
+        if (loopedInfo == info) {
+          shouldDelete = false;
+          break;
+        }
       }
+      
+      if (shouldDelete) delete info;
+    }
+  }
+
+  void Particle::removeQueuedParticlesWithWindow(Window* window) {
+    std::vector<ParticleInfo*> infos;
+
+    for (auto it = particleQueue.begin(); it < particleQueue.end(); ) {
+      ParticleInfo* info = *it;
+
+      if (info->window == window) {
+        it = particleQueue.erase(it);
+
+        bool shouldApend = true;
+
+        for (ParticleInfo* loopedInfo : infos) {
+          if (loopedInfo == info) {
+            shouldApend = false;
+            break;
+          }
+        }
+        
+        if (shouldApend) infos.push_back(info);
+      } else ++it;
+    }
+
+    for (ParticleInfo* info : infos) delete info;
   }
 }
