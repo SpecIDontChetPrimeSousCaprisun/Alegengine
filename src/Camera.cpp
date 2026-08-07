@@ -1,4 +1,5 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/rendering/Camera.hpp>
+#include <Alegengine/rendering/Window.hpp>
 
 namespace Aleg {
   Camera::Camera(glm::vec2 pos) 

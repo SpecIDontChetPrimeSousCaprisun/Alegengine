@@ -1,4 +1,4 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/userInterface/ScrollingElement.hpp>
 #include <cmath>
 #include <algorithm>
 

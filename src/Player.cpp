@@ -1,4 +1,6 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/objects/Player.hpp>
+#include <Alegengine/objects/Particle.hpp>
+#include <Alegengine/rendering/Window.hpp>
 
 namespace Aleg {
   Player::Player(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window)

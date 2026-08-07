@@ -1,4 +1,5 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/helpers/Font.hpp>
+#include <Alegengine/helpers/FileLoader.hpp>
 #include <sstream>
 
 namespace Aleg {

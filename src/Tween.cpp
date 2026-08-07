@@ -1,5 +1,4 @@
-// Tween.cpp
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/helpers/Tween.hpp>
 
 namespace Aleg {
   std::vector<TweenBase*> TweenBase::tweens;

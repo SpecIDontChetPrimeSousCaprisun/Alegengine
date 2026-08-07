@@ -1,4 +1,6 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/objects/Object.hpp>
+#include <Alegengine/rendering/Window.hpp>
+#include <Alegengine/helpers/FileLoader.hpp>
 #include <cmath>
 #include <sstream>
 #include <shaders/Vertex.h>

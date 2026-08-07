@@ -1,4 +1,4 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/rendering/ScreenEffect.hpp>
 
 namespace Aleg {
   std::map<std::string, ScreenEffect*> ScreenEffect::effects;

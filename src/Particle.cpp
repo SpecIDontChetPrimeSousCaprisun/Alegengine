@@ -1,4 +1,6 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/objects/Particle.hpp>
+#include <Alegengine/rendering/Window.hpp>
+#include <Alegengine/rng.hpp>
 
 namespace Aleg {
   int Particle::amntOfParticlesPerFrame = 5;

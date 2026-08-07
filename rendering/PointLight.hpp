@@ -7,6 +7,8 @@
 #include <vector>
 
 namespace Aleg {
+  extern float baseLighting;
+
   class PointLight : public Object {
   public:
     PointLight(glm::vec2 position, float radius, float intensity, glm::vec3 color, Window* window = nullptr);

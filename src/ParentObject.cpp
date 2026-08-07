@@ -1,4 +1,5 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/objects/ParentObject.hpp>
+#include <Alegengine/userInterface/TextElement.hpp>
 
 namespace Aleg {
   Logger* ParentObject::logger = new Logger("ParentObject");

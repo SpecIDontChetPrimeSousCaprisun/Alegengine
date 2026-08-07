@@ -1,4 +1,5 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/userInterface/UIElement.hpp>
+#include <Alegengine/rendering/Window.hpp>
 
 namespace Aleg {
   UIElement::UIElement(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window) 

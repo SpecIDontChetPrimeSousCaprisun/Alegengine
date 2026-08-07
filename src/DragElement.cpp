@@ -1,4 +1,5 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/userInterface/DragElement.hpp>
+#include <Alegengine/rendering/Window.hpp>
 #include <algorithm>
 
 namespace Aleg {

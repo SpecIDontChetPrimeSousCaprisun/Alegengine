@@ -13,6 +13,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Aleg {
+  extern std::string type;
+
   class Object;
   class Window;
 

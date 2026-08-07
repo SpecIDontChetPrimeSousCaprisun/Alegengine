@@ -1,4 +1,5 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/userInterface/TextElement.hpp>
+#include <Alegengine/rendering/Window.hpp>
 #include <shaders/TextVertex.h>
 #include <shaders/TextFrag.h>
 

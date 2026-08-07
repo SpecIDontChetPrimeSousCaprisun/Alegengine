@@ -1,4 +1,5 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/userInterface/Button.hpp>
+#include <Alegengine/rendering/Window.hpp>
 
 namespace Aleg {
   Logger* Button::logger = new Logger("Button");

@@ -1,4 +1,7 @@
-#include <Alegengine/alegengine.hpp>
+#include <Alegengine/rendering/Window.hpp>
+#include <Alegengine/helpers/Tween.hpp>
+#include <Alegengine/objects/Particle.hpp>
+#include <Alegengine/rendering/PointLight.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <sstream>

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "rng.hpp"
+
 #include "rendering/Window.hpp"
 #include "rendering/Shader.hpp"
 #include "rendering/Camera.hpp"
@@ -26,13 +28,8 @@
 #include "helpers/Tween.hpp"
 
 #include <string>
-#include <random>
 
 namespace Aleg {
-  extern std::string type;
-  extern std::mt19937 rng;
-  extern float baseLighting;
-
   void init(std::string type = "topdown"); // Types can be : topdown and side
   void mainLoop();
 }

@@ -1,4 +1,6 @@
 #pragma once
+
+#include <Alegengine/rendering/Window.hpp>
 #include <functional>
 #include <cmath>
 #include <vector>
