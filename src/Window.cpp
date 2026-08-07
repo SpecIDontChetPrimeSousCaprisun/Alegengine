@@ -22,7 +22,7 @@ namespace Aleg {
     ss << message << "\n";
 
     if (type == GL_DEBUG_TYPE_ERROR) {
-      Window::logger->error(ss.str());
+      //Window::logger->error(ss.str());
     } else {
       Window::logger->warn(ss.str());
     }
@@ -242,7 +242,7 @@ namespace Aleg {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
-    //glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE); // also request a debug context explicitly
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE); // also request a debug context explicitly
 
     currentWindow = new Window(600, 400, "Game", "main");
 
@@ -316,6 +316,37 @@ namespace Aleg {
       glClear(GL_COLOR_BUFFER_BIT);
 
       glViewport(0, 0, fbWidth, fbHeight);
+    }
+
+    if (shaders["objShader"]) {
+      glUseProgram(shaders["objShader"]->program);
+      glUniform1i(glGetUniformLocation(shaders["objShader"]->program, "lightCount"), lights.size());
+      glUniform1f(
+        glGetUniformLocation(shaders["objShader"]->program, "baseLight"), 
+        baseLighting
+      );
+
+      int i = 0;
+
+      for (PointLight* light : lights) {
+        std::string base = "lightPositions[" + std::to_string(i) + "]";
+        glUniform2f(glGetUniformLocation(shaders["objShader"]->program, base.c_str()),
+                    light->realPosition.x, light->realPosition.y);
+        
+        base = "lightColors[" + std::to_string(i) + "]";
+        glUniform3f(glGetUniformLocation(shaders["objShader"]->program, base.c_str()),
+                    light->color.x, light->color.y, light->color.z);
+
+        base = "lightRadii[" + std::to_string(i) + "]";
+        glUniform1f(glGetUniformLocation(shaders["objShader"]->program, base.c_str()),
+                    light->radius);
+
+        base = "lightIntensities[" + std::to_string(i) + "]";
+        glUniform1f(glGetUniformLocation(shaders["objShader"]->program, base.c_str()),
+                    light->intensity);
+
+        i++;
+      }
     }
 
     parent->recursivelyDrawChildren(); // Draw

@@ -4,6 +4,7 @@
 #include "rendering/Shader.hpp"
 #include "rendering/Camera.hpp"
 #include "rendering/ScreenEffect.hpp"
+#include "rendering/PointLight.hpp"
 
 #include "objects/Object.hpp"
 #include "objects/ParentObject.hpp"
@@ -30,6 +31,7 @@
 namespace Aleg {
   extern std::string type;
   extern std::mt19937 rng;
+  extern float baseLighting;
 
   void init(std::string type = "topdown"); // Types can be : topdown and side
   void mainLoop();

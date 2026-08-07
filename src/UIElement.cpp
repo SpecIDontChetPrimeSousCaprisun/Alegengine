@@ -14,6 +14,7 @@ namespace Aleg {
   void UIElement::initObject() {
     anchored = true;
     canCollide = false;
+    affectedByLight = false;
   }
 
   DrawInfo* UIElement::beforeDrawing() {

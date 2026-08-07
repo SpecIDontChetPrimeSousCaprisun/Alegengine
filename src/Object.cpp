@@ -9,7 +9,7 @@ namespace Aleg {
   Logger* Object::logger = new Logger("Object");
 
   void Object::init() {
-    Window::shaderInfos.push_back(new ShaderInfo("objShader", (const char*)Vertex_glsl, (const char*) Frag_glsl));
+    Window::shaderInfos.push_back(new ShaderInfo("objShader", (const char*)Vertex_glsl, (const char*)Frag_glsl));
   }
 
   Object::Object(glm::vec2 position, glm::vec2 size, float transparency, glm::vec3 color, float zIndex, Window* window) 
@@ -189,6 +189,11 @@ namespace Aleg {
       usesColor ? 1 : 0
     ); 
 
+    glUniform1i(
+      glGetUniformLocation(shader->program, "affectedByLight"),
+      affectedByLight ? 1 : 0
+    );
+
     glUniform3f(
       glGetUniformLocation(shader->program, "colorChange"),
       colorChange.x, colorChange.y, colorChange.z
@@ -210,13 +215,13 @@ namespace Aleg {
     
     // Send Object data
     glUniform2f(
-      glGetUniformLocation(shader->program, "realPos"),
-      info->position.x, info->position.y
+      glGetUniformLocation(shader->program, "objectWorldPos"),
+      realPosition.x, realPosition.y
     );
 
     glUniform2f(
-      glGetUniformLocation(shader->program, "realSize"),
-      info->size.x, info->size.y
+      glGetUniformLocation(shader->program, "objectWorldSize"),
+      realSize.x, realSize.y
     );
 
     // Send resolution

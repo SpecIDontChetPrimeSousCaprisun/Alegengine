@@ -15,6 +15,8 @@
 #include <string>
 
 namespace Aleg {
+  class PointLight;
+
   class Window {
   public:
     Window(float width, float height, std::string name, std::string mapName);
@@ -30,7 +32,8 @@ namespace Aleg {
     double lastFrame = 0;
     std::vector<ScreenEffect*> screenEffects;
     std::map<std::string, Shader*> shaders;
- 
+    std::vector<PointLight*> lights;
+
     static void mainLoop();
     static int init();
 
