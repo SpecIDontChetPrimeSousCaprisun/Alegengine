@@ -147,6 +147,8 @@ namespace Aleg {
   }
 
   void Window::makeSceneTexture() {
+    glfwMakeContextCurrent(window);
+
     if (sceneTexture) glDeleteTextures(1, &sceneTexture);
     if (sceneFBO) glDeleteFramebuffers(1, &sceneFBO);
 
@@ -193,6 +195,8 @@ namespace Aleg {
   }
 
   void Window::makePingpongBuffers() {
+    glfwMakeContextCurrent(window);
+
     if (pingpongTexture[0]) glDeleteTextures(2, pingpongTexture);
     if (pingpongFBO[0]) glDeleteFramebuffers(2, pingpongFBO);
 

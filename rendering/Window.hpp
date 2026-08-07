@@ -50,7 +50,7 @@ namespace Aleg {
     void recreateOlderShaders();
 
     unsigned int VAO, VBO, sceneTexture, sceneFBO;
-    unsigned int pingpongFBO[2];
-    unsigned int pingpongTexture[2];
+    unsigned int pingpongFBO[2] = {0, 0};
+    unsigned int pingpongTexture[2] = {0, 0};
   };
 }
