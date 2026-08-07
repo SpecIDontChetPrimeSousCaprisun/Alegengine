@@ -67,6 +67,7 @@ namespace Aleg {
     float rotation = 0.0f;
     float gravity = 500.0f;
     float parallaxFactor = 1.0f;
+    float cornerRadius = 0.0f;
     
     glm::vec3 color;
     glm::vec3 colorChange = glm::vec3(0.0f, 0.0f, 0.0f);

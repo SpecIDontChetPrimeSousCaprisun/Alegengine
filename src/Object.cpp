@@ -186,6 +186,11 @@ namespace Aleg {
       1 - transparency
     );
 
+    glUniform1f(
+      glGetUniformLocation(shader->program, "cornerRadius"),
+      cornerRadius
+    );
+
     glUniform1i(
       glGetUniformLocation(shader->program, "useColor"),
       usesColor ? 1 : 0
@@ -224,6 +229,11 @@ namespace Aleg {
     glUniform2f(
       glGetUniformLocation(shader->program, "objectWorldSize"),
       realSize.x, realSize.y
+    );
+
+    glUniform2f(
+      glGetUniformLocation(shader->program, "objectSize"),
+      info->size.x, info->size.y
     );
 
     // Send resolution
