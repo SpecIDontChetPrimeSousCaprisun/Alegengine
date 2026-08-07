@@ -77,6 +77,8 @@ namespace Aleg {
     bool anchored = false;
     bool canCollide = true;
     bool affectedByLight = true;
+    bool flipH = false;
+    bool flipV = false;
 
     CollisionGroup mask = CollisionGroups::Default;
     CollisionGroup collisionGroup = CollisionGroups::Default;

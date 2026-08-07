@@ -201,6 +201,16 @@ namespace Aleg {
       affectedByLight ? 1 : 0
     );
 
+    glUniform1i(
+      glGetUniformLocation(shader->program, "flipH"),
+      flipH ? 1 : 0
+    );
+
+    glUniform1i(
+      glGetUniformLocation(shader->program, "flipV"),
+      flipV ? 1 : 0
+    );
+
     glUniform3f(
       glGetUniformLocation(shader->program, "colorChange"),
       colorChange.x, colorChange.y, colorChange.z

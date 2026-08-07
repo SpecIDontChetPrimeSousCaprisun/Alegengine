@@ -18,5 +18,6 @@ namespace Aleg {
 
   void Logger::error(std::string text) {
     std::cout << "\033[31m[ERROR] (" << name << ") : \033[0m" << text << "\n";
+    exit(1);
   }
 }
